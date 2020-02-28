@@ -1,6 +1,6 @@
 Package: hardhat
 Title: Construct Modeling Packages
-Version: 0.1.1
+Version: 0.1.2
 Authors@R: c(
     person("Davis", "Vaughan", , "davis@rstudio.com", c("aut", "cre")),
     person("Max", "Kuhn", , "max@rstudio.com", c("aut")),
@@ -20,14 +20,14 @@ LazyData: true
 RoxygenNote: 7.0.2
 Suggests: recipes (>= 0.1.8), testthat (>= 2.1.0), covr, knitr,
         rmarkdown, usethis, roxygen2, devtools
-Imports: glue, rlang (>= 0.4.1), tibble, vctrs (>= 0.2.0)
+Imports: glue, rlang (>= 0.4.1), tibble, vctrs (>= 0.2.3)
 URL: https://github.com/tidymodels/hardhat
 BugReports: https://github.com/tidymodels/hardhat/issues
 VignetteBuilder: knitr
 NeedsCompilation: no
-Packaged: 2020-01-07 15:27:41 UTC; davis
+Packaged: 2020-02-27 22:49:24 UTC; davis
 Author: Davis Vaughan [aut, cre],
   Max Kuhn [aut],
   RStudio [cph]
 Repository: CRAN
-Date/Publication: 2020-01-08 23:01:24 UTC
+Date/Publication: 2020-02-28 07:20:16 UTC

@@ -1,3 +1,12 @@
+# hardhat 0.1.2
+
+* `default_recipe_blueprint()` now defaults to prepping recipes with
+  `fresh = TRUE`. This is a safer default, and guards the user against
+  accidentally skipping this preprocessing step when tuning (#122).
+
+* `model_matrix()` now correctly strips all attributes from the result of the
+  internal call to `model.matrix()`.
+
 # hardhat 0.1.1
 
 * `forge()` now works correctly when used with a recipe that has a predictor
