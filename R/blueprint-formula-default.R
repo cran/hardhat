@@ -21,13 +21,19 @@
 #' @details
 #'
 #' While not different from base R, the behavior of expanding factors into
-#' dummy variables when an intercept is _not_ present should be documented.
+#' dummy variables when `indicators = "traditional"` and an intercept is _not_
+#' present is not always intuitive and should be documented.
 #'
 #' - When an intercept is present, factors are expanded into `K-1` new columns,
 #' where `K` is the number of levels in the factor.
 #'
-#' - When an intercept is _not_ present, factors are expanded into all `K`
-#' columns (one-hot encoding).
+#' - When an intercept is _not_ present, the first factor is expanded into
+#' all `K` columns (one-hot encoding), and the remaining factors are expanded
+#' into `K-1` columns. This behavior ensures that meaningful predictions can
+#' be made for the reference level of the first factor, but is not the exact
+#' "no intercept" model that was requested. Without this behavior, predictions
+#' for the reference level of the first factor would always be forced to `0`
+#' when there is no intercept.
 #'
 #' Offsets can be included in the formula method through the use of the inline
 #' function [stats::offset()]. These are returned as a tibble with 1 column
@@ -44,12 +50,16 @@
 #'
 #'    - Runs [stats::model.frame()] on the RHS formula and uses `data`.
 #'
-#'    - If `indicators = TRUE`, it then runs [stats::model.matrix()] on the
-#'    result.
+#'    - If `indicators = "traditional"`, it then runs [stats::model.matrix()]
+#'    on the result.
 #'
-#'    - If `indicators = FALSE`, factors are removed before `model.matrix()`
+#'    - If `indicators = "none"`, factors are removed before `model.matrix()`
 #'    is run, and then added back afterwards. No interactions or inline
 #'    functions involving factors are allowed.
+#'
+#'    - If `indicators = "one_hot"`, it then runs [stats::model.matrix()] on the
+#'    result using a contrast function that creates indicator columns for all
+#'    levels of all factors.
 #'
 #'    - If any offsets are present from using `offset()`, then they are
 #'    extracted with [model_offset()].
@@ -82,12 +92,16 @@
 #'    - It runs [stats::model.frame()] on `new_data` using the stored terms
 #'    object corresponding to the _predictors_.
 #'
-#'    - If, in the original [mold()] call, `indicators = TRUE` was set, it
-#'    then runs [stats::model.matrix()] on the result.
+#'    - If, in the original [mold()] call, `indicators = "traditional"` was
+#'    set, it then runs [stats::model.matrix()] on the result.
 #'
-#'    - If, in the original [mold()] call, `indicators = FALSE` was set, it
+#'    - If, in the original [mold()] call, `indicators = "none"` was set, it
 #'    runs [stats::model.matrix()] on the result without the factor columns,
 #'    and then adds them on afterwards.
+#'
+#'    - If, in the original [mold()] call, `indicators = "one_hot"` was set, it
+#'    runs [stats::model.matrix()] on the result with a contrast function that
+#'    includes indicators for all levels of all factor columns.
 #'
 #'    - If any offsets are present from using `offset()` in the original call
 #'    to [mold()], then they are extracted with [model_offset()].
@@ -131,92 +145,108 @@
 #'
 #' @examples
 #' # ---------------------------------------------------------------------------
-#' # Setup
 #'
-#' train <- iris[1:100,]
-#' test <- iris[101:150,]
+#' data("hardhat-example-data")
 #'
 #' # ---------------------------------------------------------------------------
 #' # Formula Example
 #'
 #' # Call mold() with the training data
 #' processed <- mold(
-#'   log(Sepal.Width) ~ Sepal.Length + Species,
-#'   train,
+#'   log(num_1) ~ num_2 + fac_1,
+#'   example_train,
 #'   blueprint = default_formula_blueprint(intercept = TRUE)
 #' )
 #'
 #' # Then, call forge() with the blueprint and the test data
 #' # to have it preprocess the test data in the same way
-#' forge(test, processed$blueprint)
+#' forge(example_test, processed$blueprint)
 #'
 #' # Use `outcomes = TRUE` to also extract the preprocessed outcome
-#' forge(test, processed$blueprint, outcomes = TRUE)
+#' forge(example_test, processed$blueprint, outcomes = TRUE)
 #'
 #' # ---------------------------------------------------------------------------
 #' # Factors without an intercept
 #'
 #' # No intercept is added by default
-#' processed <- mold(Sepal.Width ~ Species, train)
+#' processed <- mold(num_1 ~ fac_1 + fac_2, example_train)
 #'
-#' # So factor columns are completely expanded
-#' # into all `K` columns (the number of levels)
+#' # So, for factor columns, the first factor is completely expanded into all
+#' # `K` columns (the number of levels), and the subsequent factors are expanded
+#' # into `K - 1` columns.
 #' processed$predictors
+#'
+#' # In the above example, `fac_1` is expanded into all three columns,
+#' # `fac_2` is not. This behavior comes from `model.matrix()`, and is somewhat
+#' # known in the R community, but can lead to a model that is difficult to
+#' # interpret since the corresponding p-values are testing wildly different
+#' # hypotheses.
+#'
+#' # To get all indicators for all columns (irrespective of the intercept),
+#' # use the `indicators = "one_hot"` option
+#' processed <- mold(
+#'   num_1 ~ fac_1 + fac_2,
+#'   example_train,
+#'   blueprint = default_formula_blueprint(indicators = "one_hot")
+#' )
+#'
+#' processed$predictors
+#'
+#' # It is not possible to construct a no-intercept model that expands all
+#' # factors into `K - 1` columns using the formula method. If required, a
+#' # recipe could be used to construct this model.
 #'
 #' # ---------------------------------------------------------------------------
 #' # Global variables
 #'
-#' y <- rep(1, times = nrow(train))
+#' y <- rep(1, times = nrow(example_train))
 #'
 #' # In base R, global variables are allowed in a model formula
-#' frame <- model.frame(Species ~ y + Sepal.Length, train)
+#' frame <- model.frame(fac_1 ~ y + num_2, example_train)
 #' head(frame)
 #'
 #' # mold() does not allow them, and throws an error
-#' tryCatch(
-#'   expr = mold(Species ~ y + Sepal.Length, train),
-#'   error = function(e) print(e$message)
-#' )
+#' try(mold(fac_1 ~ y + num_2, example_train))
 #'
 #' # ---------------------------------------------------------------------------
 #' # Dummy variables and interactions
 #'
 #' # By default, factor columns are expanded
 #' # and interactions are created, both by
-#' # calling model.matrix(). Some models (like
+#' # calling `model.matrix()`. Some models (like
 #' # tree based models) can take factors directly
 #' # but still might want to use the formula method.
-#' # In those cases, set `indicators = FALSE` to not
-#' # run model.matrix() on factor columns. Interactions
+#' # In those cases, set `indicators = "none"` to not
+#' # run `model.matrix()` on factor columns. Interactions
 #' # are still allowed and are run on numeric columns.
 #'
-#' blueprint_no_indicators <- default_formula_blueprint(indicators = FALSE)
+#' bp_no_indicators <- default_formula_blueprint(indicators = "none")
 #'
 #' processed <- mold(
-#'   ~ Species + Sepal.Width:Sepal.Length,
-#'   train,
-#'   blueprint = blueprint_no_indicators
+#'   ~ fac_1 + num_1:num_2,
+#'   example_train,
+#'   blueprint = bp_no_indicators
 #' )
 #'
 #' processed$predictors
 #'
-#' # An informative error is thrown when `indicators = FALSE` and
+#' # An informative error is thrown when `indicators = "none"` and
 #' # factors are present in interaction terms or in inline functions
-#' try(mold(Sepal.Width ~ Sepal.Length:Species, train, blueprint = blueprint_no_indicators))
-#' try(mold(Sepal.Width ~ paste0(Species), train, blueprint = blueprint_no_indicators))
+#' try(mold(num_1 ~ num_2:fac_1, example_train, blueprint = bp_no_indicators))
+#' try(mold(num_1 ~ paste0(fac_1), example_train, blueprint = bp_no_indicators))
 #'
 #' # ---------------------------------------------------------------------------
 #' # Multivariate outcomes
 #'
 #' # Multivariate formulas can be specified easily
-#' processed <- mold(Sepal.Width + log(Sepal.Length) ~ Species, train)
+#' processed <- mold(num_1 + log(num_2) ~ fac_1, example_train)
 #' processed$outcomes
 #'
 #' # Inline functions on the LHS are run, but any matrix
 #' # output is flattened (like what happens in `model.matrix()`)
 #' # (essentially this means you don't wind up with columns
 #' # in the tibble that are matrices)
-#' processed <- mold(poly(Sepal.Length, degree = 2) ~ Species, train)
+#' processed <- mold(poly(num_2, degree = 2) ~ fac_1, example_train)
 #' processed$outcomes
 #'
 #' # TRUE
@@ -224,47 +254,49 @@
 #'
 #' # Multivariate formulas specified in mold()
 #' # carry over into forge()
-#' forge(test, processed$blueprint, outcomes = TRUE)
+#' forge(example_test, processed$blueprint, outcomes = TRUE)
 #'
 #' # ---------------------------------------------------------------------------
 #' # Offsets
 #'
 #' # Offsets are handled specially in base R, so they deserve special
 #' # treatment here as well. You can add offsets using the inline function
-#' # offset()
-#' processed <- mold(Sepal.Width ~ offset(Sepal.Length) + Species, train)
+#' # `offset()`
+#' processed <- mold(num_1 ~ offset(num_2) + fac_1, example_train)
 #'
 #' processed$extras$offset
 #'
 #' # Multiple offsets can be included, and they get added together
 #' processed <- mold(
-#'   Sepal.Width ~ offset(Sepal.Length) + offset(Petal.Width),
-#'   train
+#'   num_1 ~ offset(num_2) + offset(num_3),
+#'   example_train
 #' )
 #'
 #' identical(
 #'   processed$extras$offset$.offset,
-#'   train$Sepal.Length + train$Petal.Width
+#'   example_train$num_2 + example_train$num_3
 #' )
 #'
 #' # Forging test data will also require
 #' # and include the offset
-#' forge(test, processed$blueprint)
+#' forge(example_test, processed$blueprint)
 #'
 #' # ---------------------------------------------------------------------------
 #' # Intercept only
 #'
 #' # Because `1` and `0` are intercept modifying terms, they are
-#' # not allowed in the formula and are controlled by the
+#' # not allowed in the formula and are instead controlled by the
 #' # `intercept` argument of the blueprint. To use an intercept
 #' # only formula, you should supply `NULL` on the RHS of the formula.
-#' mold(~ NULL, train, blueprint = default_formula_blueprint(intercept = TRUE))
-#'
+#' mold(
+#'   ~ NULL,
+#'   example_train,
+#'   blueprint = default_formula_blueprint(intercept = TRUE)
+#' )
 #' @export
 default_formula_blueprint <- function(intercept = FALSE,
                                       allow_novel_levels = FALSE,
-                                      indicators = TRUE) {
-
+                                      indicators = "traditional") {
   mold <- get_mold_formula_default_function_set()
   forge <- get_forge_formula_default_function_set()
 
@@ -290,7 +322,7 @@ new_default_formula_blueprint <- function(mold,
                                           allow_novel_levels = FALSE,
                                           ptypes = NULL,
                                           formula = NULL,
-                                          indicators = TRUE,
+                                          indicators = "traditional",
                                           terms = list(
                                             predictors = NULL,
                                             outcomes = NULL
@@ -381,23 +413,30 @@ mold_formula_default_process_predictors <- function(blueprint, data) {
 
   ptype <- extract_ptype(original_data)
 
-  if (!blueprint$indicators) {
-    factor_names <- extract_original_factor_names(ptype)
-    validate_no_factors_in_functions(formula, factor_names)
-    validate_no_factors_in_interactions(formula, factor_names)
-    formula <- remove_factors_from_formula(formula, factor_names)
+  if (identical(blueprint$indicators, "none")) {
+    factorish_names <- extract_original_factorish_names(ptype)
+    validate_no_factorish_in_functions(formula, factorish_names)
+    validate_no_factorish_in_interactions(formula, factorish_names)
+    formula <- remove_factorish_from_formula(formula, factorish_names)
   }
 
   framed <- model_frame(formula, data)
   offset <- extract_offset(framed$terms, framed$data)
 
-  predictors <- model_matrix(
-    terms = framed$terms,
-    data = framed$data
-  )
+  if (identical(blueprint$indicators, "one_hot")) {
+    predictors <- model_matrix_one_hot(
+      terms = framed$terms,
+      data = framed$data
+    )
+  } else {
+    predictors <- model_matrix(
+      terms = framed$terms,
+      data = framed$data
+    )
+  }
 
-  if (!blueprint$indicators) {
-    predictors <- reattach_factor_columns(predictors, data, factor_names)
+  if (identical(blueprint$indicators, "none")) {
+    predictors <- reattach_factorish_columns(predictors, data, factorish_names)
   }
 
   terms <- simplify_terms(framed$terms)
@@ -508,14 +547,21 @@ forge_formula_default_process_predictors <- function(blueprint, predictors) {
 
   framed <- model_frame(terms, predictors)
 
-  data <- model_matrix(
-    terms = framed$terms,
-    data = framed$data
-  )
+  if (identical(blueprint$indicators, "one_hot")) {
+    data <- model_matrix_one_hot(
+      terms = framed$terms,
+      data = framed$data
+    )
+  } else {
+    data <- model_matrix(
+      terms = framed$terms,
+      data = framed$data
+    )
+  }
 
-  if (!blueprint$indicators) {
-    factor_names <- extract_original_factor_names(blueprint$ptypes$predictors)
-    data <- reattach_factor_columns(data, predictors, factor_names)
+  if (identical(blueprint$indicators, "none")) {
+    factorish_names <- extract_original_factorish_names(blueprint$ptypes$predictors)
+    data <- reattach_factorish_columns(data, predictors, factorish_names)
   }
 
   .offset <- extract_offset(framed$terms, framed$data)
@@ -655,11 +701,11 @@ flatten_embedded_columns <- function(data) {
   tibble::as_tibble(data)
 }
 
-validate_no_factors_in_functions <- function(.formula, .factor_names) {
+validate_no_factorish_in_functions <- function(.formula, .factorish_names) {
 
   .terms <- terms(.formula)
 
-  bad_original_cols <- detect_factors_in_functions(.terms, .factor_names)
+  bad_original_cols <- detect_factorish_in_functions(.terms, .factorish_names)
 
   ok <- length(bad_original_cols) == 0L
 
@@ -668,8 +714,8 @@ validate_no_factors_in_functions <- function(.formula, .factor_names) {
     bad_original_cols <- glue_quote_collapse(bad_original_cols)
 
     glubort(
-      "Functions involving factors have been detected on the ",
-      "RHS of `formula`. These are not allowed when `indicators = FALSE`. ",
+      "Functions involving factors or characters have been detected on the ",
+      "RHS of `formula`. These are not allowed when `indicators = \"none\"`. ",
       "Functions involving factors were detected for the following columns: ",
       "{bad_original_cols}."
     )
@@ -683,7 +729,7 @@ validate_no_factors_in_functions <- function(.formula, .factor_names) {
 # are present in an inline function
 # The row.names() of the factors matrix contains all of the
 # non-interaction expressions that are used in the formula
-detect_factors_in_functions <- function(.terms, .factor_names) {
+detect_factorish_in_functions <- function(.terms, .factorish_names) {
 
   terms_matrix <- attr(.terms, "factors")
 
@@ -694,32 +740,32 @@ detect_factors_in_functions <- function(.terms, .factor_names) {
 
   all_terms_exprs <- row.names(terms_matrix)
 
-  # Remove bare factor names
-  exprs_no_bare_factors <- all_terms_exprs[!(all_terms_exprs %in% .factor_names)]
+  # Remove bare factor / character names
+  exprs_no_bare_factors <- all_terms_exprs[!(all_terms_exprs %in% .factorish_names)]
 
   if (length(exprs_no_bare_factors) == 0L) {
     return(character(0))
   }
 
-  .factor_name_is_in_a_fn <- vapply(
-    .factor_names,
+  .factorish_name_is_in_a_fn <- vapply(
+    .factorish_names,
     function(nm) {
       any(grepl(nm, exprs_no_bare_factors))
     },
     logical(1)
   )
 
-  bad_cols <- .factor_names[.factor_name_is_in_a_fn]
+  bad_cols <- .factorish_names[.factorish_name_is_in_a_fn]
 
   bad_cols
 }
 
-validate_no_factors_in_interactions <- function(.formula, .factor_names) {
+validate_no_factorish_in_interactions <- function(.formula, .factorish_names) {
 
   # Call terms on a standard formula to generate the terms interaction matrix
   .terms <- terms(.formula)
 
-  bad_original_cols <- detect_factors_in_interactions(.terms, .factor_names)
+  bad_original_cols <- detect_factorish_in_interactions(.terms, .factorish_names)
 
   ok <- length(bad_original_cols) == 0L
 
@@ -728,8 +774,8 @@ validate_no_factors_in_interactions <- function(.formula, .factor_names) {
     bad_original_cols <- glue_quote_collapse(bad_original_cols)
 
     glubort(
-      "Interaction terms involving factors have been detected on the ",
-      "RHS of `formula`. These are not allowed when `indicators = FALSE`. ",
+      "Interaction terms involving factors or characters have been detected on the ",
+      "RHS of `formula`. These are not allowed when `indicators = \"none\"`. ",
       "Interactions involving factors were detected for the following columns: ",
       "{bad_original_cols}."
     )
@@ -740,9 +786,9 @@ validate_no_factors_in_interactions <- function(.formula, .factor_names) {
 }
 
 # Returns the _original_ column names
-# of any factor columns that are present
+# of any factor / character columns that are present
 # in any interaction terms (from : or * or %in% or ^)
-detect_factors_in_interactions <- function(.terms, .factor_names) {
+detect_factorish_in_interactions <- function(.terms, .factorish_names) {
 
   terms_matrix <- attr(.terms, "factors")
 
@@ -751,7 +797,7 @@ detect_factors_in_interactions <- function(.terms, .factor_names) {
     return(character(0))
   }
 
-  other_cols <- setdiff(colnames(terms_matrix), .factor_names)
+  other_cols <- setdiff(colnames(terms_matrix), .factorish_names)
 
   no_other_cols <- length(other_cols) == 0L
   if (no_other_cols) {
@@ -759,32 +805,33 @@ detect_factors_in_interactions <- function(.terms, .factor_names) {
   }
 
   # Something like Species, rather than paste0(Species)
-  bare_factor_names <- .factor_names[.factor_names %in% row.names(terms_matrix)]
+  indicator_bare_factorish <- .factorish_names %in% row.names(terms_matrix)
+  bare_factorish_names <- .factorish_names[indicator_bare_factorish]
 
-  # Something like mold(~ paste0(Species), iris, indicators = FALSE)
-  no_bare_factors_used <- length(bare_factor_names) == 0L
-  if (no_bare_factors_used) {
+  # Something like mold(~ paste0(Species), iris, indicators = "none")
+  no_bare_factorish_used <- length(bare_factorish_names) == 0L
+  if (no_bare_factorish_used) {
     return(character(0))
   }
 
-  factor_rows <- terms_matrix[bare_factor_names, , drop = FALSE]
-  factor_rows <- factor_rows[, other_cols, drop = FALSE]
+  factorish_rows <- terms_matrix[bare_factorish_names, , drop = FALSE]
+  factorish_rows <- factorish_rows[, other_cols, drop = FALSE]
 
   # In the factor matrix, only `:` is present to represent interactions,
   # even if something like * or ^ or %in% was used to generate it
-  where_interactions <- grepl(":", colnames(factor_rows))
+  where_interactions <- grepl(":", colnames(factorish_rows))
 
   none_have_interactions <- !any(where_interactions)
   if (none_have_interactions) {
     return(character(0))
   }
 
-  interaction_cols <- factor_rows[, where_interactions, drop = FALSE]
+  interaction_cols <- factorish_rows[, where_interactions, drop = FALSE]
 
-  factor_is_bad_if_gt_0 <- rowSums(interaction_cols)
-  bad_factor_vals <- factor_is_bad_if_gt_0[factor_is_bad_if_gt_0 > 0]
+  factorish_is_bad_if_gt_0 <- rowSums(interaction_cols)
+  bad_factorish_vals <- factorish_is_bad_if_gt_0[factorish_is_bad_if_gt_0 > 0]
 
-  bad_cols <- names(bad_factor_vals)
+  bad_cols <- names(bad_factorish_vals)
 
   bad_cols
 }
@@ -835,27 +882,30 @@ detect_interactions <- function(.formula) {
   bad_terms
 }
 
-extract_original_factor_names <- function(ptype) {
+extract_original_factorish_names <- function(ptype) {
+  where_factorish <- vapply(ptype, is_factorish, logical(1))
 
-  where_factor <- vapply(ptype, is.factor, logical(1))
+  original_factorish_columns <- colnames(ptype)[where_factorish]
 
-  original_factor_columns <- colnames(ptype)[where_factor]
-
-  original_factor_columns
+  original_factorish_columns
 }
 
-remove_factors_from_formula <- function(.formula, .factor_names) {
+is_factorish <- function(x) {
+  is.factor(x) || is.character(x)
+}
 
-  if (length(.factor_names) == 0L) {
+remove_factorish_from_formula <- function(.formula, .factorish_names) {
+
+  if (length(.factorish_names) == 0L) {
     return(.formula)
   }
 
-  .factor_syms <- rlang::syms(.factor_names)
+  .factorish_syms <- rlang::syms(.factorish_names)
 
   .f_rhs <- rlang::f_rhs(.formula)
 
-  for (.factor_sym in .factor_syms) {
-    .f_rhs <- rlang::expr(!! .f_rhs - !! .factor_sym)
+  for (.factorish_sym in .factorish_syms) {
+    .f_rhs <- rlang::expr(!! .f_rhs - !! .factorish_sym)
   }
 
   rlang::new_formula(
@@ -865,9 +915,9 @@ remove_factors_from_formula <- function(.formula, .factor_names) {
   )
 }
 
-reattach_factor_columns <- function(predictors, data, .factor_names) {
-  data_factor_cols <- data[, .factor_names, drop = FALSE]
-  tibble::add_column(predictors, !!! data_factor_cols)
+reattach_factorish_columns <- function(predictors, data, factorish_names) {
+  data_factorish_cols <- data[, factorish_names, drop = FALSE]
+  tibble::add_column(predictors, !!! data_factorish_cols)
 }
 
 get_predictors_formula <- function(formula) {

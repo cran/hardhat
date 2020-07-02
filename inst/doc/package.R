@@ -9,7 +9,10 @@ options(rlang_backtrace_on_error = "none")
 ## ----setup--------------------------------------------------------------------
 library(hardhat)
 library(tibble)
-iris <- as_tibble(iris)
+library(modeldata)
+
+data(penguins)
+penguins <- na.omit(penguins)
 
 ## ----out.width = '100%', echo = FALSE-----------------------------------------
 knitr::include_graphics("../man/figures/Fitting.png")
@@ -65,8 +68,8 @@ simple_lm_impl <- function(predictors, outcomes) {
 }
 
 ## -----------------------------------------------------------------------------
-predictors <- as.matrix(subset(iris, select = Sepal.Width))
-outcomes <- iris$Sepal.Length
+predictors <- as.matrix(subset(penguins, select = bill_length_mm))
+outcomes <- penguins$body_mass_g
 
 simple_lm_impl(predictors, outcomes)
 
@@ -89,17 +92,17 @@ simple_lm_bridge <- function(processed) {
 
 ## -----------------------------------------------------------------------------
 # Simulate formula interface
-processed_1 <- mold(Sepal.Width ~ Sepal.Length + Species, iris)
+processed_1 <- mold(bill_length_mm ~ body_mass_g + species, penguins)
 
 # Simulate xy interface
-processed_2 <- mold(x = iris["Sepal.Length"], y = iris$Sepal.Width)
+processed_2 <- mold(x = penguins["body_mass_g"], y = penguins$bill_length_mm)
 
 simple_lm_bridge(processed_1)
 
 simple_lm_bridge(processed_2)
 
 ## ---- error=TRUE--------------------------------------------------------------
-multi_outcome <- mold(Sepal.Width + Petal.Width ~ Sepal.Length + Species, iris)
+multi_outcome <- mold(bill_length_mm + bill_depth_mm ~ body_mass_g + species, penguins)
 
 simple_lm_bridge(multi_outcome)
 
@@ -142,9 +145,9 @@ simple_lm.recipe <- function(x, data, ...) {
 }
 
 ## -----------------------------------------------------------------------------
-predictors <- iris[c("Sepal.Width", "Petal.Width")]
-outcomes_vec <- iris$Sepal.Length
-outcomes_df <- iris["Sepal.Length"]
+predictors <- penguins[c("bill_length_mm", "bill_depth_mm")]
+outcomes_vec <- penguins$body_mass_g
+outcomes_df <- penguins["body_mass_g"]
 
 # Vector outcome
 simple_lm(predictors, outcomes_vec)
@@ -153,21 +156,21 @@ simple_lm(predictors, outcomes_vec)
 simple_lm(predictors, outcomes_df)
 
 # Formula interface
-simple_lm(Sepal.Length ~ Sepal.Width + Petal.Width, iris)
+simple_lm(body_mass_g ~ bill_length_mm + bill_depth_mm, penguins)
 
 ## ---- warning=FALSE, message=FALSE--------------------------------------------
 library(recipes)
 
 # - Log a predictor
 # - Generate dummy variables for factors
-simple_lm(Sepal.Length ~ log(Sepal.Width) + Species, iris)
+simple_lm(body_mass_g ~ log(bill_length_mm) + species, penguins)
 
 # Same, but with a recipe
-rec <- recipe(Sepal.Length ~ Sepal.Width + Species, iris) %>%
-  step_log(Sepal.Width) %>%
-  step_dummy(Species, one_hot = TRUE)
+rec <- recipe(body_mass_g ~ bill_length_mm + species, penguins) %>%
+  step_log(bill_length_mm) %>%
+  step_dummy(species, one_hot = TRUE)
 
-simple_lm(rec, iris)
+simple_lm(rec, penguins)
 
 ## -----------------------------------------------------------------------------
 simple_lm <- function(x, ...) {
@@ -203,7 +206,7 @@ simple_lm.recipe <- function(x, data, intercept = TRUE, ...) {
 simple_lm(predictors, outcomes_df)
 
 # But the user can turn this off
-simple_lm(Sepal.Length ~ log(Sepal.Width) + Species, iris, intercept = FALSE)
+simple_lm(body_mass_g ~ log(bill_length_mm) + species, penguins, intercept = FALSE)
 
 ## -----------------------------------------------------------------------------
 predict_simple_lm_numeric <- function(object, predictors) {
@@ -218,9 +221,9 @@ predict_simple_lm_numeric <- function(object, predictors) {
 }
 
 ## -----------------------------------------------------------------------------
-model <- simple_lm(Sepal.Width ~ Sepal.Length + Species, iris)
+model <- simple_lm(bill_length_mm ~ body_mass_g + species, penguins)
 
-predictors <- forge(iris, model$blueprint)$predictors
+predictors <- forge(penguins, model$blueprint)$predictors
 predictors <- as.matrix(predictors)
 
 predict_simple_lm_numeric(model, predictors)
@@ -239,10 +242,10 @@ predict_simple_lm_bridge <- function(type, object, predictors) {
 }
 
 ## ---- error=TRUE--------------------------------------------------------------
-model <- simple_lm(Sepal.Width ~ Sepal.Length + Species, iris)
+model <- simple_lm(bill_length_mm ~ body_mass_g + species, penguins)
 
 # Pass in the data frame
-predictors <- forge(iris, model$blueprint)$predictors
+predictors <- forge(penguins, model$blueprint)$predictors
 
 predict_simple_lm_bridge("numeric", model, predictors)
 
@@ -263,38 +266,38 @@ predict.simple_lm <- function(object, new_data, type = "numeric", ...) {
 }
 
 ## -----------------------------------------------------------------------------
-model <- simple_lm(Sepal.Width ~ log(Sepal.Length) + Species, iris)
+model <- simple_lm(bill_length_mm ~ log(body_mass_g) + species, penguins)
 
-predict(model, iris)
+predict(model, penguins)
 
 ## ---- warning=TRUE, error=TRUE------------------------------------------------
 # `new_data` isn't a data frame
-predict(model, iris$Species)
+predict(model, penguins$species)
 
 # Missing a required column
-predict(model, subset(iris, select = -Sepal.Length))
+predict(model, subset(penguins, select = -body_mass_g))
 
-# In this case, 'Species' is a character, 
+# In this case, 'species' is a character, 
 # but can be losslessy converted to a factor.
 # That happens for you automatically and silently.
-iris_chr_species <- transform(iris, Species = as.character(Species))
+penguins_chr_species <- transform(penguins, species = as.character(species))
 
-predict(model, iris_chr_species)
+predict(model, penguins_chr_species)
 
-# Slightly different from above. Here, 'Species' is a character, 
+# Slightly different from above. Here, 'species' is a character, 
 # AND has an extra unexpected factor level. It is 
 # removed with a warning, but you still get a factor 
 # with the correct levels
-iris_chr_bad_species <- iris_chr_species
-iris_chr_bad_species$Species[1] <- "new_level"
+penguins_chr_bad_species <- penguins_chr_species
+penguins_chr_bad_species$species[1] <- "new_level"
 
-predict(model, iris_chr_bad_species)
+predict(model, penguins_chr_bad_species)
 
 # This case throws an error.
-# Here, 'Species' is a double and
+# Here, 'species' is a double and
 # when it should have been a factor.
 # You can't cast a double to a factor!
-iris_dbl_species <- transform(iris, Species = 1)
+penguins_dbl_species <- transform(penguins, species = 1)
 
-predict(model, iris_dbl_species)
+predict(model, penguins_dbl_species)
 

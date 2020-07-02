@@ -8,63 +8,67 @@ options(rlang_backtrace_on_error = "none")
 
 ## ----setup--------------------------------------------------------------------
 library(hardhat)
+library(modeldata)
+
+data(penguins)
+penguins <- na.omit(penguins)
 
 ## -----------------------------------------------------------------------------
-iris_form <- mold(Sepal.Width ~ log(Sepal.Length), iris)
+penguin_form <- mold(body_mass_g ~ log(bill_length_mm), penguins)
 
-names(iris_form)
-
-## -----------------------------------------------------------------------------
-iris_form$predictors
+names(penguin_form)
 
 ## -----------------------------------------------------------------------------
-iris_form$outcomes
+penguin_form$predictors
 
 ## -----------------------------------------------------------------------------
-mold(Sepal.Width ~ log(Sepal.Length) + offset(Petal.Width), iris)$extras
+penguin_form$outcomes
+
+## -----------------------------------------------------------------------------
+mold(body_mass_g ~ log(bill_length_mm) + offset(bill_depth_mm), penguins)$extras
 
 ## -----------------------------------------------------------------------------
 identical(
-  mold(~ Sepal.Width, iris), 
-  mold(~ Sepal.Width, iris, blueprint = default_formula_blueprint())
+  mold(~ body_mass_g, penguins), 
+  mold(~ body_mass_g, penguins, blueprint = default_formula_blueprint())
 )
 
 ## -----------------------------------------------------------------------------
-no_intercept <- mold(~ Sepal.Width, iris)
+no_intercept <- mold(~ body_mass_g, penguins)
 
 no_intercept$predictors
 
 ## -----------------------------------------------------------------------------
 with_intercept <- mold(
-  ~ Sepal.Width, iris, 
+  ~ body_mass_g, penguins, 
   blueprint = default_formula_blueprint(intercept = TRUE)
 )
 
 with_intercept$predictors
 
 ## ---- error=TRUE--------------------------------------------------------------
-mold(~ Sepal.Width - 1, iris)
+mold(~ body_mass_g - 1, penguins)
 
-mold(~ Sepal.Width + 0, iris)
+mold(~ body_mass_g + 0, penguins)
 
 ## -----------------------------------------------------------------------------
-expanded_dummies <- mold(~ Sepal.Width + Species, iris)
+expanded_dummies <- mold(~ body_mass_g + species, penguins)
 
 expanded_dummies$predictors
 
 ## -----------------------------------------------------------------------------
 non_expanded_dummies <- mold(
-  ~ Sepal.Width + Species, iris, 
-  blueprint = default_formula_blueprint(indicators = FALSE)
+  ~ body_mass_g + species, penguins, 
+  blueprint = default_formula_blueprint(indicators = "none")
 )
 
 non_expanded_dummies$predictors
 
 ## -----------------------------------------------------------------------------
-k_cols <- mold(~ Species, iris)
+k_cols <- mold(~ species, penguins)
 
 k_minus_one_cols <- mold(
-  ~ Species, iris, 
+  ~ species, penguins, 
   blueprint = default_formula_blueprint(intercept = TRUE)
 )
 
@@ -73,33 +77,33 @@ colnames(k_cols$predictors)
 colnames(k_minus_one_cols$predictors)
 
 ## -----------------------------------------------------------------------------
-.f <- cbind(Sepal.Width, Sepal.Length) ~ Petal.Width
+.f <- cbind(body_mass_g, bill_length_mm) ~ bill_depth_mm
 
-frame <- model.frame(.f, iris)
+frame <- model.frame(.f, penguins)
 
 head(frame)
 
 ## -----------------------------------------------------------------------------
 ncol(frame)
 
-class(frame$`cbind(Sepal.Width, Sepal.Length)`)
+class(frame$`cbind(body_mass_g, bill_length_mm)`)
 
-head(frame$`cbind(Sepal.Width, Sepal.Length)`)
+head(frame$`cbind(body_mass_g, bill_length_mm)`)
 
 ## -----------------------------------------------------------------------------
-multivariate <- mold(Sepal.Width + log(Sepal.Length) ~ Petal.Width, iris)
+multivariate <- mold(body_mass_g + log(bill_length_mm) ~ bill_depth_mm, penguins)
 
 multivariate$outcomes
 
 ## -----------------------------------------------------------------------------
-x <- subset(iris, select = -Sepal.Width)
-y <- subset(iris, select = Sepal.Width)
+x <- subset(penguins, select = -body_mass_g)
+y <- subset(penguins, select =  body_mass_g)
 
-iris_xy <- mold(x, y)
+penguin_xy <- mold(x, y)
 
-iris_xy$predictors
+penguin_xy$predictors
 
-iris_xy$outcomes
+penguin_xy$outcomes
 
 ## -----------------------------------------------------------------------------
 xy_with_intercept <- mold(x, y, blueprint = default_xy_blueprint(intercept = TRUE))
@@ -107,24 +111,24 @@ xy_with_intercept <- mold(x, y, blueprint = default_xy_blueprint(intercept = TRU
 xy_with_intercept$predictors
 
 ## -----------------------------------------------------------------------------
-mold(x, y$Sepal.Width)$outcomes
+mold(x, y$body_mass_g)$outcomes
 
 ## ---- message=FALSE, warning=FALSE--------------------------------------------
 library(recipes)
 
-rec <- recipe(Sepal.Length ~ Species + Petal.Width, iris) %>%
-  step_log(Sepal.Length) %>%
-  step_dummy(Species)
+rec <- recipe(bill_length_mm ~ species + bill_depth_mm, penguins) %>%
+  step_log(bill_length_mm) %>%
+  step_dummy(species)
 
-iris_recipe <- mold(rec, iris)
+penguin_recipe <- mold(rec, penguins)
 
-iris_recipe$predictors
+penguin_recipe$predictors
 
-iris_recipe$outcomes
+penguin_recipe$outcomes
 
 ## -----------------------------------------------------------------------------
 recipe_with_intercept <- mold(
-  rec, iris, 
+  rec, penguins, 
   blueprint = default_recipe_blueprint(intercept = TRUE)
 )
 
