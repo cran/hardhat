@@ -133,7 +133,13 @@
 #' using a [recipes::recipe()].
 #'
 #' Global variables are _not_ allowed in the formula. An error will be thrown
-#' if they are included. All terms in the formula should come from `data`.
+#' if they are included. All terms in the formula should come from `data`. If
+#' you need to use inline functions in the formula, the safest way to do so is
+#' to prefix them with their package name, like `pkg::fn()`. This ensures that
+#' the function will always be available at `mold()` (fit) and `forge()`
+#' (prediction) time. That said, if the package is _attached_
+#' (i.e. with `library()`), then you should be able to use the inline function
+#' without the prefix.
 #'
 #' By default, intercepts are _not_ included in the predictor output from the
 #' formula. To include an intercept, set
@@ -755,24 +761,32 @@ detect_factorish_in_functions <- function(.terms, .factorish_names) {
     return(character(0))
   }
 
-  all_terms_exprs <- row.names(terms_matrix)
+  all_terms_chrs <- row.names(terms_matrix)
 
   # Remove bare factor / character names
-  exprs_no_bare_factors <- all_terms_exprs[!(all_terms_exprs %in% .factorish_names)]
+  candidate_chrs <- all_terms_chrs[!(all_terms_chrs %in% .factorish_names)]
 
-  if (length(exprs_no_bare_factors) == 0L) {
+  if (length(candidate_chrs) == 0L) {
     return(character(0))
   }
 
-  .factorish_name_is_in_a_fn <- vapply(
+  candidate_exprs <- rlang::parse_exprs(candidate_chrs)
+
+  # Look for each factorish name in the list of candidate expressions
+  factorish_name_is_in_a_fn <- map_lgl(
     .factorish_names,
-    function(nm) {
-      any(grepl(nm, exprs_no_bare_factors))
-    },
-    logical(1)
+    function(factorish_name) {
+      has_name <- map_lgl(
+        candidate_exprs,
+        expr_contains,
+        what = as.name(factorish_name),
+        include_function_names = FALSE
+      )
+      any(has_name)
+    }
   )
 
-  bad_cols <- .factorish_names[.factorish_name_is_in_a_fn]
+  bad_cols <- .factorish_names[factorish_name_is_in_a_fn]
 
   bad_cols
 }
@@ -836,14 +850,16 @@ detect_factorish_in_interactions <- function(.terms, .factorish_names) {
 
   # In the factor matrix, only `:` is present to represent interactions,
   # even if something like * or ^ or %in% was used to generate it
-  where_interactions <- grepl(":", colnames(factorish_rows))
+  terms_names <- colnames(factorish_rows)
+  terms_exprs <- rlang::parse_exprs(terms_names)
+  has_interactions <- map_lgl(terms_exprs, expr_contains, what = as.name(":"))
 
-  none_have_interactions <- !any(where_interactions)
+  none_have_interactions <- !any(has_interactions)
   if (none_have_interactions) {
     return(character(0))
   }
 
-  interaction_cols <- factorish_rows[, where_interactions, drop = FALSE]
+  interaction_cols <- factorish_rows[, has_interactions, drop = FALSE]
 
   factorish_is_bad_if_gt_0 <- rowSums(interaction_cols)
   bad_factorish_vals <- factorish_is_bad_if_gt_0[factorish_is_bad_if_gt_0 > 0]
@@ -883,10 +899,11 @@ detect_interactions <- function(.formula) {
     return(character(0))
   }
 
-  terms_nms <- colnames(terms_matrix)
+  terms_names <- colnames(terms_matrix)
 
   # All interactions (*, ^, %in%) will be expanded to `:`
-  has_interactions <- grepl(":", terms_nms)
+  terms_exprs <- rlang::parse_exprs(terms_names)
+  has_interactions <- map_lgl(terms_exprs, expr_contains, what = as.name(":"))
 
   has_any_interactions <- any(has_interactions)
 
@@ -894,9 +911,48 @@ detect_interactions <- function(.formula) {
     return(character(0))
   }
 
-  bad_terms <- terms_nms[has_interactions]
+  bad_terms <- terms_names[has_interactions]
 
   bad_terms
+}
+
+expr_contains <- function(expr, what, ..., include_function_names = TRUE) {
+  if (!rlang::is_expression(expr)) {
+    rlang::abort("`expr` must be an expression.")
+  }
+  if (!rlang::is_symbol(what)) {
+    rlang::abort("`what` must be a symbol.")
+  }
+
+  expr_contains_recurse(expr, what, include_function_names)
+}
+expr_contains_recurse <- function(expr, what, include_function_names) {
+  switch (
+    typeof(expr),
+    symbol = identical(expr, what),
+    language = language_contains(expr, what, include_function_names),
+    FALSE
+  )
+}
+language_contains <- function(expr, what, include_function_names) {
+  if (length(expr) == 0L) {
+    rlang::abort("Internal error, `expr` should be at least length 1.")
+  }
+
+  if (!include_function_names) {
+    # Drop function name to avoid matching that
+    expr <- expr[-1L]
+  }
+
+  # Recurse into elements
+  contains <- map_lgl(
+    expr,
+    expr_contains_recurse,
+    what = what,
+    include_function_names = include_function_names
+  )
+
+  any(contains)
 }
 
 extract_original_factorish_names <- function(ptype) {

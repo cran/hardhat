@@ -9,6 +9,8 @@
 \alias{extract_fit_engine}
 \alias{extract_mold}
 \alias{extract_preprocessor}
+\alias{extract_parameter_dials}
+\alias{extract_parameter_set_dials}
 \title{Generics for object extraction}
 \usage{
 extract_workflow(x, ...)
@@ -24,6 +26,10 @@ extract_fit_engine(x, ...)
 extract_mold(x, ...)
 
 extract_preprocessor(x, ...)
+
+extract_parameter_dials(x, ...)
+
+extract_parameter_set_dials(x, ...)
 }
 \arguments{
 \item{x}{An object.}
@@ -36,7 +42,7 @@ objects. Methods are defined in other packages, such as tune,
 workflows, and workflowsets, but the returned object is always the same.
 \itemize{
 \item \code{extract_fit_engine()} returns the engine specific fit embedded within
-a parsnip model fit. For example, when using \code{\link[parsnip:linear_reg]{parsnip::linear_reg()}}
+a parsnip model fit. For example, when using \code{parsnip::linear_reg()}
 with the \code{"lm"} engine, this returns the underlying \code{lm} object.
 \item \code{extract_fit_parsnip()} returns a parsnip model fit.
 \item \code{extract_mold()} returns the preprocessed "mold" object returned
@@ -48,6 +54,8 @@ variable selectors.
 expressions used for preprocessing.
 \item \code{extract_recipe()} returns a recipe, possibly estimated.
 \item \code{extract_workflow()} returns a workflow, possibly fit.
+\item \code{extract_parameter_dials()} returns a single dials parameter object.
+\item \code{extract_parameter_set_dials()} returns a set of dials parameter objects.
 }
 }
 \examples{

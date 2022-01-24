@@ -1,3 +1,16 @@
+# hardhat 0.2.0
+
+* Moved `tune()` from tune to hardhat (#181).
+
+* Added `extract_parameter_dials()` and `extract_parameter_set_dials()` generics
+  to extend the family of `extract_*()` generics.
+
+* `mold()` no longer misinterprets `::` as an interaction term (#174).
+
+* When `indicators = "none"`, `mold()` no longer misinterprets factor columns
+  as being part of an inline function if there is a similarly named non-factor
+  column also present (#182).
+
 # hardhat 0.1.6
 
 * Added a new family of `extract_*()` S3 generics for extracting important
