@@ -22,16 +22,14 @@
 #' @examples
 #'
 #' hardhat:::extract_ptype(iris)
-#'
 #' @keywords internal
 #'
 extract_ptype <- function(data) {
-
   if (is.null(data)) {
     return(NULL)
   }
 
   data <- check_is_data_like(data)
 
-  vctrs::vec_slice(data, 0L)
+  vec_slice(data, 0L)
 }

@@ -14,7 +14,19 @@
 
 <title>Molding data for modeling</title>
 
-<script src="data:application/javascript;base64,Ly8gUGFuZG9jIDIuOSBhZGRzIGF0dHJpYnV0ZXMgb24gYm90aCBoZWFkZXIgYW5kIGRpdi4gV2UgcmVtb3ZlIHRoZSBmb3JtZXIgKHRvCi8vIGJlIGNvbXBhdGlibGUgd2l0aCB0aGUgYmVoYXZpb3Igb2YgUGFuZG9jIDwgMi44KS4KZG9jdW1lbnQuYWRkRXZlbnRMaXN0ZW5lcignRE9NQ29udGVudExvYWRlZCcsIGZ1bmN0aW9uKGUpIHsKICB2YXIgaHMgPSBkb2N1bWVudC5xdWVyeVNlbGVjdG9yQWxsKCJkaXYuc2VjdGlvbltjbGFzcyo9J2xldmVsJ10gPiA6Zmlyc3QtY2hpbGQiKTsKICB2YXIgaSwgaCwgYTsKICBmb3IgKGkgPSAwOyBpIDwgaHMubGVuZ3RoOyBpKyspIHsKICAgIGggPSBoc1tpXTsKICAgIGlmICghL15oWzEtNl0kL2kudGVzdChoLnRhZ05hbWUpKSBjb250aW51ZTsgIC8vIGl0IHNob3VsZCBiZSBhIGhlYWRlciBoMS1oNgogICAgYSA9IGguYXR0cmlidXRlczsKICAgIHdoaWxlIChhLmxlbmd0aCA+IDApIGgucmVtb3ZlQXR0cmlidXRlKGFbMF0ubmFtZSk7CiAgfQp9KTsK"></script>
+<script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
+// be compatible with the behavior of Pandoc < 2.8).
+document.addEventListener('DOMContentLoaded', function(e) {
+  var hs = document.querySelectorAll("div.section[class*='level'] > :first-child");
+  var i, h, a;
+  for (i = 0; i < hs.length; i++) {
+    h = hs[i];
+    if (!/^h[1-6]$/i.test(h.tagName)) continue;  // it should be a header h1-h6
+    a = h.attributes;
+    while (a.length > 0) h.removeAttribute(a[0].name);
+  }
+});
+</script>
 
 <style type="text/css">
   code{white-space: pre-wrap;}
@@ -24,6 +36,7 @@
   div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
   ul.task-list{list-style: none;}
     </style>
+
 
 
 <style type="text/css">
@@ -125,7 +138,187 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 
 
 
-<link rel="stylesheet" href="data:text/css,body%20%7B%0Abackground%2Dcolor%3A%20%23fff%3B%0Amargin%3A%201em%20auto%3B%0Amax%2Dwidth%3A%20700px%3B%0Aoverflow%3A%20visible%3B%0Apadding%2Dleft%3A%202em%3B%0Apadding%2Dright%3A%202em%3B%0Afont%2Dfamily%3A%20%22Open%20Sans%22%2C%20%22Helvetica%20Neue%22%2C%20Helvetica%2C%20Arial%2C%20sans%2Dserif%3B%0Afont%2Dsize%3A%2014px%3B%0Aline%2Dheight%3A%201%2E35%3B%0A%7D%0A%23TOC%20%7B%0Aclear%3A%20both%3B%0Amargin%3A%200%200%2010px%2010px%3B%0Apadding%3A%204px%3B%0Awidth%3A%20400px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Aborder%2Dradius%3A%205px%3B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Afont%2Dsize%3A%2013px%3B%0Aline%2Dheight%3A%201%2E3%3B%0A%7D%0A%23TOC%20%2Etoctitle%20%7B%0Afont%2Dweight%3A%20bold%3B%0Afont%2Dsize%3A%2015px%3B%0Amargin%2Dleft%3A%205px%3B%0A%7D%0A%23TOC%20ul%20%7B%0Apadding%2Dleft%3A%2040px%3B%0Amargin%2Dleft%3A%20%2D1%2E5em%3B%0Amargin%2Dtop%3A%205px%3B%0Amargin%2Dbottom%3A%205px%3B%0A%7D%0A%23TOC%20ul%20ul%20%7B%0Amargin%2Dleft%3A%20%2D2em%3B%0A%7D%0A%23TOC%20li%20%7B%0Aline%2Dheight%3A%2016px%3B%0A%7D%0Atable%20%7B%0Amargin%3A%201em%20auto%3B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dcolor%3A%20%23DDDDDD%3B%0Aborder%2Dstyle%3A%20outset%3B%0Aborder%2Dcollapse%3A%20collapse%3B%0A%7D%0Atable%20th%20%7B%0Aborder%2Dwidth%3A%202px%3B%0Apadding%3A%205px%3B%0Aborder%2Dstyle%3A%20inset%3B%0A%7D%0Atable%20td%20%7B%0Aborder%2Dwidth%3A%201px%3B%0Aborder%2Dstyle%3A%20inset%3B%0Aline%2Dheight%3A%2018px%3B%0Apadding%3A%205px%205px%3B%0A%7D%0Atable%2C%20table%20th%2C%20table%20td%20%7B%0Aborder%2Dleft%2Dstyle%3A%20none%3B%0Aborder%2Dright%2Dstyle%3A%20none%3B%0A%7D%0Atable%20thead%2C%20table%20tr%2Eeven%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Ap%20%7B%0Amargin%3A%200%2E5em%200%3B%0A%7D%0Ablockquote%20%7B%0Abackground%2Dcolor%3A%20%23f6f6f6%3B%0Apadding%3A%200%2E25em%200%2E75em%3B%0A%7D%0Ahr%20%7B%0Aborder%2Dstyle%3A%20solid%3B%0Aborder%3A%20none%3B%0Aborder%2Dtop%3A%201px%20solid%20%23777%3B%0Amargin%3A%2028px%200%3B%0A%7D%0Adl%20%7B%0Amargin%2Dleft%3A%200%3B%0A%7D%0Adl%20dd%20%7B%0Amargin%2Dbottom%3A%2013px%3B%0Amargin%2Dleft%3A%2013px%3B%0A%7D%0Adl%20dt%20%7B%0Afont%2Dweight%3A%20bold%3B%0A%7D%0Aul%20%7B%0Amargin%2Dtop%3A%200%3B%0A%7D%0Aul%20li%20%7B%0Alist%2Dstyle%3A%20circle%20outside%3B%0A%7D%0Aul%20ul%20%7B%0Amargin%2Dbottom%3A%200%3B%0A%7D%0Apre%2C%20code%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0Aborder%2Dradius%3A%203px%3B%0Acolor%3A%20%23333%3B%0Awhite%2Dspace%3A%20pre%2Dwrap%3B%20%0A%7D%0Apre%20%7B%0Aborder%2Dradius%3A%203px%3B%0Amargin%3A%205px%200px%2010px%200px%3B%0Apadding%3A%2010px%3B%0A%7D%0Apre%3Anot%28%5Bclass%5D%29%20%7B%0Abackground%2Dcolor%3A%20%23f7f7f7%3B%0A%7D%0Acode%20%7B%0Afont%2Dfamily%3A%20Consolas%2C%20Monaco%2C%20%27Courier%20New%27%2C%20monospace%3B%0Afont%2Dsize%3A%2085%25%3B%0A%7D%0Ap%20%3E%20code%2C%20li%20%3E%20code%20%7B%0Apadding%3A%202px%200px%3B%0A%7D%0Adiv%2Efigure%20%7B%0Atext%2Dalign%3A%20center%3B%0A%7D%0Aimg%20%7B%0Abackground%2Dcolor%3A%20%23FFFFFF%3B%0Apadding%3A%202px%3B%0Aborder%3A%201px%20solid%20%23DDDDDD%3B%0Aborder%2Dradius%3A%203px%3B%0Aborder%3A%201px%20solid%20%23CCCCCC%3B%0Amargin%3A%200%205px%3B%0A%7D%0Ah1%20%7B%0Amargin%2Dtop%3A%200%3B%0Afont%2Dsize%3A%2035px%3B%0Aline%2Dheight%3A%2040px%3B%0A%7D%0Ah2%20%7B%0Aborder%2Dbottom%3A%204px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Apadding%2Dbottom%3A%202px%3B%0Afont%2Dsize%3A%20145%25%3B%0A%7D%0Ah3%20%7B%0Aborder%2Dbottom%3A%202px%20solid%20%23f7f7f7%3B%0Apadding%2Dtop%3A%2010px%3B%0Afont%2Dsize%3A%20120%25%3B%0A%7D%0Ah4%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23f7f7f7%3B%0Amargin%2Dleft%3A%208px%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Ah5%2C%20h6%20%7B%0Aborder%2Dbottom%3A%201px%20solid%20%23ccc%3B%0Afont%2Dsize%3A%20105%25%3B%0A%7D%0Aa%20%7B%0Acolor%3A%20%230033dd%3B%0Atext%2Ddecoration%3A%20none%3B%0A%7D%0Aa%3Ahover%20%7B%0Acolor%3A%20%236666ff%3B%20%7D%0Aa%3Avisited%20%7B%0Acolor%3A%20%23800080%3B%20%7D%0Aa%3Avisited%3Ahover%20%7B%0Acolor%3A%20%23BB00BB%3B%20%7D%0Aa%5Bhref%5E%3D%22http%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0Aa%5Bhref%5E%3D%22https%3A%22%5D%20%7B%0Atext%2Ddecoration%3A%20underline%3B%20%7D%0A%0Acode%20%3E%20span%2Ekw%20%7B%20color%3A%20%23555%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Edt%20%7B%20color%3A%20%23902000%3B%20%7D%20%0Acode%20%3E%20span%2Edv%20%7B%20color%3A%20%2340a070%3B%20%7D%20%0Acode%20%3E%20span%2Ebn%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Efl%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Ech%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Est%20%7B%20color%3A%20%23d14%3B%20%7D%20%0Acode%20%3E%20span%2Eco%20%7B%20color%3A%20%23888888%3B%20font%2Dstyle%3A%20italic%3B%20%7D%20%0Acode%20%3E%20span%2Eot%20%7B%20color%3A%20%23007020%3B%20%7D%20%0Acode%20%3E%20span%2Eal%20%7B%20color%3A%20%23ff0000%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Efu%20%7B%20color%3A%20%23900%3B%20font%2Dweight%3A%20bold%3B%20%7D%20%0Acode%20%3E%20span%2Eer%20%7B%20color%3A%20%23a61717%3B%20background%2Dcolor%3A%20%23e3d2d2%3B%20%7D%20%0A" type="text/css" />
+<style type="text/css">body {
+background-color: #fff;
+margin: 1em auto;
+max-width: 700px;
+overflow: visible;
+padding-left: 2em;
+padding-right: 2em;
+font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+font-size: 14px;
+line-height: 1.35;
+}
+#TOC {
+clear: both;
+margin: 0 0 10px 10px;
+padding: 4px;
+width: 400px;
+border: 1px solid #CCCCCC;
+border-radius: 5px;
+background-color: #f6f6f6;
+font-size: 13px;
+line-height: 1.3;
+}
+#TOC .toctitle {
+font-weight: bold;
+font-size: 15px;
+margin-left: 5px;
+}
+#TOC ul {
+padding-left: 40px;
+margin-left: -1.5em;
+margin-top: 5px;
+margin-bottom: 5px;
+}
+#TOC ul ul {
+margin-left: -2em;
+}
+#TOC li {
+line-height: 16px;
+}
+table {
+margin: 1em auto;
+border-width: 1px;
+border-color: #DDDDDD;
+border-style: outset;
+border-collapse: collapse;
+}
+table th {
+border-width: 2px;
+padding: 5px;
+border-style: inset;
+}
+table td {
+border-width: 1px;
+border-style: inset;
+line-height: 18px;
+padding: 5px 5px;
+}
+table, table th, table td {
+border-left-style: none;
+border-right-style: none;
+}
+table thead, table tr.even {
+background-color: #f7f7f7;
+}
+p {
+margin: 0.5em 0;
+}
+blockquote {
+background-color: #f6f6f6;
+padding: 0.25em 0.75em;
+}
+hr {
+border-style: solid;
+border: none;
+border-top: 1px solid #777;
+margin: 28px 0;
+}
+dl {
+margin-left: 0;
+}
+dl dd {
+margin-bottom: 13px;
+margin-left: 13px;
+}
+dl dt {
+font-weight: bold;
+}
+ul {
+margin-top: 0;
+}
+ul li {
+list-style: circle outside;
+}
+ul ul {
+margin-bottom: 0;
+}
+pre, code {
+background-color: #f7f7f7;
+border-radius: 3px;
+color: #333;
+white-space: pre-wrap; 
+}
+pre {
+border-radius: 3px;
+margin: 5px 0px 10px 0px;
+padding: 10px;
+}
+pre:not([class]) {
+background-color: #f7f7f7;
+}
+code {
+font-family: Consolas, Monaco, 'Courier New', monospace;
+font-size: 85%;
+}
+p > code, li > code {
+padding: 2px 0px;
+}
+div.figure {
+text-align: center;
+}
+img {
+background-color: #FFFFFF;
+padding: 2px;
+border: 1px solid #DDDDDD;
+border-radius: 3px;
+border: 1px solid #CCCCCC;
+margin: 0 5px;
+}
+h1 {
+margin-top: 0;
+font-size: 35px;
+line-height: 40px;
+}
+h2 {
+border-bottom: 4px solid #f7f7f7;
+padding-top: 10px;
+padding-bottom: 2px;
+font-size: 145%;
+}
+h3 {
+border-bottom: 2px solid #f7f7f7;
+padding-top: 10px;
+font-size: 120%;
+}
+h4 {
+border-bottom: 1px solid #f7f7f7;
+margin-left: 8px;
+font-size: 105%;
+}
+h5, h6 {
+border-bottom: 1px solid #ccc;
+font-size: 105%;
+}
+a {
+color: #0033dd;
+text-decoration: none;
+}
+a:hover {
+color: #6666ff; }
+a:visited {
+color: #800080; }
+a:visited:hover {
+color: #BB00BB; }
+a[href^="http:"] {
+text-decoration: underline; }
+a[href^="https:"] {
+text-decoration: underline; }
+
+code > span.kw { color: #555; font-weight: bold; } 
+code > span.dt { color: #902000; } 
+code > span.dv { color: #40a070; } 
+code > span.bn { color: #d14; } 
+code > span.fl { color: #d14; } 
+code > span.ch { color: #d14; } 
+code > span.st { color: #d14; } 
+code > span.co { color: #888888; font-style: italic; } 
+code > span.ot { color: #007020; } 
+code > span.al { color: #ff0000; font-weight: bold; } 
+code > span.fu { color: #900; font-weight: bold; } 
+code > span.er { color: #a61717; background-color: #e3d2d2; } 
+</style>
 
 
 
@@ -148,19 +341,47 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>penguins <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(penguins)</span></code></pre></div>
 <div id="introduction" class="section level2">
 <h2>Introduction</h2>
-<p>For most modeling functions, data must be accepted from the user in some format where the <em>outcomes</em> and <em>predictors</em> are both specified. The next step is often to validate and preprocess that input in some way to prepare it for the actual modeling implementation function. For example, when a formula method is used, R provides some infrastructure for preprocessing the user input through the <code>model.frame()</code> and <code>model.matrix()</code> functions.</p>
-<p>But the formula method is not the only way to specify modeling terms. There is also an XY method, where <code>x</code> and <code>y</code> are supplied directly, and, recently, a <code>recipe</code> implementation can be used to preprocess data using a set of sequential steps.</p>
-<p>As a developer, you likely won’t want to care about the details of how each of these methods work, but (hopefully) still want to provide all three of these interfaces for your shiny new model. <code>mold()</code> makes this easy on you, and takes care of the details of preprocessing user input from any of these methods.</p>
-<p>The intended use of <code>mold()</code> is to be called from your user facing modeling function. To see that in action, have a look at the vignette found here: <code>vignette(&quot;package&quot;, &quot;hardhat&quot;)</code>. The rest of this vignette will be focused on the various different ways to use <code>mold()</code>, but keep in mind that generally it is not used as an interactive function like this.</p>
+<p>For most modeling functions, data must be accepted from the user in
+some format where the <em>outcomes</em> and <em>predictors</em> are both
+specified. The next step is often to validate and preprocess that input
+in some way to prepare it for the actual modeling implementation
+function. For example, when a formula method is used, R provides some
+infrastructure for preprocessing the user input through the
+<code>model.frame()</code> and <code>model.matrix()</code>
+functions.</p>
+<p>But the formula method is not the only way to specify modeling terms.
+There is also an XY method, where <code>x</code> and <code>y</code> are
+supplied directly, and, recently, a <code>recipe</code> implementation
+can be used to preprocess data using a set of sequential steps.</p>
+<p>As a developer, you likely won’t want to care about the details of
+how each of these methods work, but (hopefully) still want to provide
+all three of these interfaces for your shiny new model.
+<code>mold()</code> makes this easy on you, and takes care of the
+details of preprocessing user input from any of these methods.</p>
+<p>The intended use of <code>mold()</code> is to be called from your
+user facing modeling function. To see that in action, have a look at the
+vignette found here: <code>vignette(&quot;package&quot;, &quot;hardhat&quot;)</code>. The
+rest of this vignette will be focused on the various different ways to
+use <code>mold()</code>, but keep in mind that generally it is not used
+as an interactive function like this.</p>
 </div>
 <div id="a-first-example" class="section level2">
 <h2>A First Example</h2>
-<p>The most familiar interface for R users is likely the formula interface. In this case, terms are specified using the formula notation: <code>outcomes ~ predictors</code>. Generally, as a developer, you have to then call <code>model.frame()</code> and <code>model.matrix()</code> on this result to coerce it into the right format for ingestion into your model. <code>mold()</code> handles all of that for you.</p>
+<p>The most familiar interface for R users is likely the formula
+interface. In this case, terms are specified using the formula notation:
+<code>outcomes ~ predictors</code>. Generally, as a developer, you have
+to then call <code>model.frame()</code> and <code>model.matrix()</code>
+on this result to coerce it into the right format for ingestion into
+your model. <code>mold()</code> handles all of that for you.</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>penguin_form <span class="ot">&lt;-</span> <span class="fu">mold</span>(body_mass_g <span class="sc">~</span> <span class="fu">log</span>(bill_length_mm), penguins)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(penguin_form)</span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] &quot;predictors&quot; &quot;outcomes&quot;   &quot;blueprint&quot;  &quot;extras&quot;</span></span></code></pre></div>
-<p><code>mold()</code> returns four things. Two of them are immediately useful, and are almost always applicable to the modeling implementation you have created. The first is the <code>predictors</code>, returned as a tibble. All of the required processing has been done for you, so you just have to focus on the modeling implementation.</p>
+<p><code>mold()</code> returns four things. Two of them are immediately
+useful, and are almost always applicable to the modeling implementation
+you have created. The first is the <code>predictors</code>, returned as
+a tibble. All of the required processing has been done for you, so you
+just have to focus on the modeling implementation.</p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>penguin_form<span class="sc">$</span>predictors</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 333 × 1</span></span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    `log(bill_length_mm)`</span></span>
@@ -176,7 +397,9 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9                  3.65</span></span>
 <span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10                  3.54</span></span>
 <span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
-<p>Second is the <code>outcomes</code>, also returned as a tibble. While not used here, any processing on the outcome that was specified in the formula would also be done here.</p>
+<p>Second is the <code>outcomes</code>, also returned as a tibble. While
+not used here, any processing on the outcome that was specified in the
+formula would also be done here.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>penguin_form<span class="sc">$</span>outcomes</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 333 × 1</span></span>
 <span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    body_mass_g</span></span>
@@ -192,7 +415,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9        3800</span></span>
 <span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10        4400</span></span>
 <span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
-<p>Beyond these two elements, <code>mold()</code> also returns a slot for any <code>extras</code> that might have been generated during preprocessing, but aren’t specifically predictors or outcomes. For example, an <code>offset()</code> can be specified directly in the formula, but isn’t technically a predictor.</p>
+<p>Beyond these two elements, <code>mold()</code> also returns a slot
+for any <code>extras</code> that might have been generated during
+preprocessing, but aren’t specifically predictors or outcomes. For
+example, an <code>offset()</code> can be specified directly in the
+formula, but isn’t technically a predictor.</p>
 <div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mold</span>(body_mass_g <span class="sc">~</span> <span class="fu">log</span>(bill_length_mm) <span class="sc">+</span> <span class="fu">offset</span>(bill_depth_mm), penguins)<span class="sc">$</span>extras</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; $offset</span></span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 333 × 1</span></span>
@@ -209,25 +436,49 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9    21.2</span></span>
 <span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10    21.1</span></span>
 <span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
-<p>Lastly, <code>mold()</code> returns a very important object, the <code>blueprint</code>. This is responsible for knowing how to preprocess both the training data, and any new data at prediction time. As a developer, you should attach the <code>blueprint</code> to your model object before returning it to the user. For more information about this, see the package development vignette, <code>vignette(&quot;package&quot;, &quot;hardhat&quot;)</code>.</p>
+<p>Lastly, <code>mold()</code> returns a very important object, the
+<code>blueprint</code>. This is responsible for knowing how to
+preprocess both the training data, and any new data at prediction time.
+As a developer, you should attach the <code>blueprint</code> to your
+model object before returning it to the user. For more information about
+this, see the package development vignette,
+<code>vignette(&quot;package&quot;, &quot;hardhat&quot;)</code>.</p>
 </div>
 <div id="blueprints" class="section level2">
 <h2>blueprints</h2>
-<p>As mentioned above, one of the objects that <code>mold()</code> returns is an <code>blueprint</code> responsible for controlling the preprocessing. There are multiple blueprints available in <code>hardhat</code>, but when you call <code>mold()</code> one is selected automatically for you. The following two calls generate the same result, using the default formula blueprint.</p>
+<p>As mentioned above, one of the objects that <code>mold()</code>
+returns is an <code>blueprint</code> responsible for controlling the
+preprocessing. There are multiple blueprints available in
+<code>hardhat</code>, but when you call <code>mold()</code> one is
+selected automatically for you. The following two calls generate the
+same result, using the default formula blueprint.</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">identical</span>(</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mold</span>(<span class="sc">~</span> body_mass_g, penguins), </span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mold</span>(<span class="sc">~</span> body_mass_g, penguins, <span class="at">blueprint =</span> <span class="fu">default_formula_blueprint</span>())</span>
 <span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
-<p>Each blueprint can be tweaked to change how the processing for that interface occurs, and the options vary per blueprint. To understand why you’d ever want to do this, read on!</p>
+<p>Each blueprint can be tweaked to change how the processing for that
+interface occurs, and the options vary per blueprint. To understand why
+you’d ever want to do this, read on!</p>
 </div>
 <div id="formulas" class="section level2">
 <h2>Formulas</h2>
-<p>Now that you have a basic idea of how <code>mold()</code> works, we can talk about some of the more interesting functionality.</p>
+<p>Now that you have a basic idea of how <code>mold()</code> works, we
+can talk about some of the more interesting functionality.</p>
 <div id="intercepts" class="section level3">
 <h3>Intercepts</h3>
-<p>One challenge with the standard formula interface is that, by default, intercepts are always implicitly present and are added to your data set automatically. This works great for the simple regression case. However, other models might either always require or never allow an intercept, but still use the formula interface because of its convenience (for example, <code>earth</code>). This has led to many ad hoc solutions that prevent the user from removing or adding an intercept.</p>
-<p>To get around this, <code>mold()</code> will never add an intercept by default. Instead, the addition of an intercept is completely controlled by the formula blueprint argument, <code>intercept</code>.</p>
+<p>One challenge with the standard formula interface is that, by
+default, intercepts are always implicitly present and are added to your
+data set automatically. This works great for the simple regression case.
+However, other models might either always require or never allow an
+intercept, but still use the formula interface because of its
+convenience (for example, <code>earth</code>). This has led to many ad
+hoc solutions that prevent the user from removing or adding an
+intercept.</p>
+<p>To get around this, <code>mold()</code> will never add an intercept
+by default. Instead, the addition of an intercept is completely
+controlled by the formula blueprint argument,
+<code>intercept</code>.</p>
 <div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>no_intercept <span class="ot">&lt;-</span> <span class="fu">mold</span>(<span class="sc">~</span> body_mass_g, penguins)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>no_intercept<span class="sc">$</span>predictors</span>
@@ -267,14 +518,22 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
 <p>An error is thrown if an intercept removal term is specified:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mold</span>(<span class="sc">~</span> body_mass_g <span class="sc">-</span> <span class="dv">1</span>, penguins)</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error: `formula` must not contain the intercept removal term: `- 1`.</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">mold</span>(<span class="sc">~</span> body_mass_g <span class="sc">+</span> <span class="dv">0</span>, penguins)</span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error: `formula` must not contain the intercept removal term: `+ 0` or `0 +`.</span></span></code></pre></div>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error in `recurse_intercept_search()`:</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ! `formula` must not contain the intercept removal term: `- 1`.</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">mold</span>(<span class="sc">~</span> body_mass_g <span class="sc">+</span> <span class="dv">0</span>, penguins)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error in `recurse_intercept_search()`:</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ! `formula` must not contain the intercept removal term: `+ 0` or `0 +`.</span></span></code></pre></div>
 </div>
 <div id="dummy-variables" class="section level3">
 <h3>Dummy variables</h3>
-<p>One of the nice things about the formula interface is that it expands factors into dummy variable columns for you. Like intercepts, this is great…until it isn’t. For example, <code>ranger</code> fits a random forest, which can take factors directly, but still uses the formula notation. In this case, it would be great if the factor columns specified as predictors <em>weren’t</em> expanded. This is the job of the blueprint argument, <code>indicators</code>.</p>
+<p>One of the nice things about the formula interface is that it expands
+factors into dummy variable columns for you. Like intercepts, this is
+great…until it isn’t. For example, <code>ranger</code> fits a random
+forest, which can take factors directly, but still uses the formula
+notation. In this case, it would be great if the factor columns
+specified as predictors <em>weren’t</em> expanded. This is the job of
+the blueprint argument, <code>indicators</code>.</p>
 <div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>expanded_dummies <span class="ot">&lt;-</span> <span class="fu">mold</span>(<span class="sc">~</span> body_mass_g <span class="sc">+</span> species, penguins)</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>expanded_dummies<span class="sc">$</span>predictors</span>
@@ -312,7 +571,13 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9        3800 Adelie </span></span>
 <span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10        4400 Adelie </span></span>
 <span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
-<p><em>Note:</em> It’s worth mentioning that when an intercept is not present, base R expands the first factor completely into <code>K</code> indicator columns corresponding to the <code>K</code> levels present in that factor (also known as one-hot encoding). Subsequent columns are expanded into the more traditional <code>K - 1</code> columns. When an intercept is present, <code>K - 1</code> columns are generated for all factor predictors.</p>
+<p><em>Note:</em> It’s worth mentioning that when an intercept is not
+present, base R expands the first factor completely into <code>K</code>
+indicator columns corresponding to the <code>K</code> levels present in
+that factor (also known as one-hot encoding). Subsequent columns are
+expanded into the more traditional <code>K - 1</code> columns. When an
+intercept is present, <code>K - 1</code> columns are generated for all
+factor predictors.</p>
 <div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>k_cols <span class="ot">&lt;-</span> <span class="fu">mold</span>(<span class="sc">~</span> species, penguins)</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>k_minus_one_cols <span class="ot">&lt;-</span> <span class="fu">mold</span>(</span>
@@ -328,7 +593,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="multivariate-outcomes" class="section level3">
 <h3>Multivariate outcomes</h3>
-<p>One of the other frustrating things about working with the formula method is that multivariate outcomes are a bit clunky to specify.</p>
+<p>One of the other frustrating things about working with the formula
+method is that multivariate outcomes are a bit clunky to specify.</p>
 <div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>.f <span class="ot">&lt;-</span> <span class="fu">cbind</span>(body_mass_g, bill_length_mm) <span class="sc">~</span> bill_depth_mm</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>frame <span class="ot">&lt;-</span> <span class="fu">model.frame</span>(.f, penguins)</span>
@@ -348,7 +614,10 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 4                                              36.7          19.3</span></span>
 <span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 5                                              39.3          20.6</span></span>
 <span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 6                                              38.9          17.8</span></span></code></pre></div>
-<p>This might look like 3 columns, but it is actually 2, where the first column is named <code>cbind(body_mass_g, bill_length_mm)</code>, and it is actually a matrix with 2 columns, <code>body_mass_g</code> and <code>bill_length_mm</code> inside it.</p>
+<p>This might look like 3 columns, but it is actually 2, where the first
+column is named <code>cbind(body_mass_g, bill_length_mm)</code>, and it
+is actually a matrix with 2 columns, <code>body_mass_g</code> and
+<code>bill_length_mm</code> inside it.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ncol</span>(frame)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [1] 2</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -363,7 +632,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb14-12"><a href="#cb14-12" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [4,]        3450           36.7</span></span>
 <span id="cb14-13"><a href="#cb14-13" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [5,]        3650           39.3</span></span>
 <span id="cb14-14"><a href="#cb14-14" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; [6,]        3625           38.9</span></span></code></pre></div>
-<p>The default formula blueprint used with <code>mold()</code> allows you to specify multiple outcomes like you specify multiple predictors. You can even do inline transformations of each outcome, although if you are doing very much of that, I’d advise using a recipe instead. <code>outcomes</code> then holds the two outcomes columns.</p>
+<p>The default formula blueprint used with <code>mold()</code> allows
+you to specify multiple outcomes like you specify multiple predictors.
+You can even do inline transformations of each outcome, although if you
+are doing very much of that, I’d advise using a recipe instead.
+<code>outcomes</code> then holds the two outcomes columns.</p>
 <div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>multivariate <span class="ot">&lt;-</span> <span class="fu">mold</span>(body_mass_g <span class="sc">+</span> <span class="fu">log</span>(bill_length_mm) <span class="sc">~</span> bill_depth_mm, penguins)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>multivariate<span class="sc">$</span>outcomes</span>
@@ -385,7 +658,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="xy" class="section level2">
 <h2>XY</h2>
-<p>The second interface is the XY interface, useful when the predictors and outcomes are specified separately.</p>
+<p>The second interface is the XY interface, useful when the predictors
+and outcomes are specified separately.</p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">subset</span>(penguins, <span class="at">select =</span> <span class="sc">-</span>body_mass_g)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">subset</span>(penguins, <span class="at">select =</span>  body_mass_g)</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -422,7 +696,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb16-34"><a href="#cb16-34" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9        3800</span></span>
 <span id="cb16-35"><a href="#cb16-35" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10        4400</span></span>
 <span id="cb16-36"><a href="#cb16-36" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
-<p>This interface doesn’t do too much in the way of preprocessing, but it does let you specify an <code>intercept</code> in the blueprint specific arguments. Rather than <code>default_formula_blueprint()</code>, this uses the <code>default_xy_blueprint()</code>.</p>
+<p>This interface doesn’t do too much in the way of preprocessing, but
+it does let you specify an <code>intercept</code> in the blueprint
+specific arguments. Rather than
+<code>default_formula_blueprint()</code>, this uses the
+<code>default_xy_blueprint()</code>.</p>
 <div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>xy_with_intercept <span class="ot">&lt;-</span> <span class="fu">mold</span>(x, y, <span class="at">blueprint =</span> <span class="fu">default_xy_blueprint</span>(<span class="at">intercept =</span> <span class="cn">TRUE</span>))</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>xy_with_intercept<span class="sc">$</span>predictors</span>
@@ -442,7 +720,14 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows, and 1 more variable: sex &lt;fct&gt;</span></span></code></pre></div>
 <div id="vector-outcomes" class="section level3">
 <h3>Vector outcomes</h3>
-<p><code>y</code> is a bit special in the XY interface, because in the univariate case users might expect to be able to pass a vector, a 1 column data frame, or a matrix. <code>mold()</code> is prepared for all of those cases, but the vector case requires special attention. To be consistent with all of the other <code>mold()</code> interfaces, the <code>outcomes</code> slot of the return value should be a tibble. To achieve this when <code>y</code> is supplied as a vector, a default column name is created, <code>&quot;.outcome&quot;</code>.</p>
+<p><code>y</code> is a bit special in the XY interface, because in the
+univariate case users might expect to be able to pass a vector, a 1
+column data frame, or a matrix. <code>mold()</code> is prepared for all
+of those cases, but the vector case requires special attention. To be
+consistent with all of the other <code>mold()</code> interfaces, the
+<code>outcomes</code> slot of the return value should be a tibble. To
+achieve this when <code>y</code> is supplied as a vector, a default
+column name is created, <code>&quot;.outcome&quot;</code>.</p>
 <div class="sourceCode" id="cb18"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mold</span>(x, y<span class="sc">$</span>body_mass_g)<span class="sc">$</span>outcomes</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # A tibble: 333 × 1</span></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;    .outcome</span></span>
@@ -462,7 +747,11 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 </div>
 <div id="recipe" class="section level2">
 <h2>Recipe</h2>
-<p>The last of the three interfaces is the relatively new recipes interface. The <code>default_recipe_blueprint()</code> knows how to <code>prep()</code> your recipe, and <code>juice()</code> it to extract the predictors and the outcomes. This is by far the most flexible way to preprocess your data.</p>
+<p>The last of the three interfaces is the relatively new recipes
+interface. The <code>default_recipe_blueprint()</code> knows how to
+<code>prep()</code> your recipe, and <code>juice()</code> it to extract
+the predictors and the outcomes. This is by far the most flexible way to
+preprocess your data.</p>
 <div class="sourceCode" id="cb19"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(recipes)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>rec <span class="ot">&lt;-</span> <span class="fu">recipe</span>(bill_length_mm <span class="sc">~</span> species <span class="sc">+</span> bill_depth_mm, penguins) <span class="sc">%&gt;%</span></span>
@@ -502,7 +791,8 @@ code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warni
 <span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt;  9           3.65</span></span>
 <span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; 10           3.54</span></span>
 <span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
-<p>The only special thing you can tweak with the recipe blueprint is whether or not an intercept is added.</p>
+<p>The only special thing you can tweak with the recipe blueprint is
+whether or not an intercept is added.</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>recipe_with_intercept <span class="ot">&lt;-</span> <span class="fu">mold</span>(</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  rec, penguins, </span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">blueprint =</span> <span class="fu">default_recipe_blueprint</span>(<span class="at">intercept =</span> <span class="cn">TRUE</span>)</span>

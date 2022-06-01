@@ -295,7 +295,7 @@
 #' # `intercept` argument of the blueprint. To use an intercept
 #' # only formula, you should supply `NULL` on the RHS of the formula.
 #' mold(
-#'   ~ NULL,
+#'   ~NULL,
 #'   example_train,
 #'   blueprint = default_formula_blueprint(intercept = TRUE)
 #' )
@@ -307,7 +307,6 @@
 #' bp <- default_formula_blueprint(composition = "dgCMatrix")
 #' processed <- mold(log(num_1) ~ num_2 + fac_1, example_train, blueprint = bp)
 #' class(processed$predictors)
-#'
 #' @export
 default_formula_blueprint <- function(intercept = FALSE,
                                       allow_novel_levels = FALSE,
@@ -324,7 +323,6 @@ default_formula_blueprint <- function(intercept = FALSE,
     indicators = indicators,
     composition = composition
   )
-
 }
 
 #' @param terms A named list of two elements, `predictors` and `outcomes`. Both
@@ -347,7 +345,6 @@ new_default_formula_blueprint <- function(mold,
                                           ),
                                           ...,
                                           subclass = character()) {
-
   validate_is_terms_list_or_null(terms)
 
   new_formula_blueprint(
@@ -363,7 +360,6 @@ new_default_formula_blueprint <- function(mold,
     ...,
     subclass = c(subclass, "default_formula_blueprint")
   )
-
 }
 
 #' @export
@@ -379,7 +375,6 @@ get_mold_formula_default_function_set <- function() {
 
 # mold - formula - clean
 mold_formula_default_clean <- function(blueprint, data) {
-
   data <- check_is_data_like(data)
 
   # validate here, not in the constructor, because we
@@ -423,7 +418,6 @@ mold_formula_default_process <- function(blueprint, data) {
 }
 
 mold_formula_default_process_predictors <- function(blueprint, data) {
-
   formula <- expand_formula_dot_notation(blueprint$formula, data)
   formula <- get_predictors_formula(formula)
 
@@ -476,7 +470,6 @@ mold_formula_default_process_predictors <- function(blueprint, data) {
 }
 
 mold_formula_default_process_outcomes <- function(blueprint, data) {
-
   formula <- blueprint$formula
 
   original_names <- get_all_outcomes(formula, data)
@@ -511,7 +504,6 @@ get_forge_formula_default_function_set <- function() {
 }
 
 forge_formula_default_clean <- function(blueprint, new_data, outcomes) {
-
   validate_is_new_data_like(new_data)
   validate_has_unique_column_names(new_data, "new_data")
   validate_is_bool(outcomes)
@@ -528,8 +520,7 @@ forge_formula_default_clean <- function(blueprint, new_data, outcomes) {
     outcomes <- shrink(new_data, blueprint$ptypes$outcomes)
     # Never allow novel levels for outcomes
     outcomes <- scream(outcomes, blueprint$ptypes$outcomes)
-  }
-  else {
+  } else {
     outcomes <- NULL
   }
 
@@ -562,7 +553,6 @@ forge_formula_default_process <- function(blueprint, predictors, outcomes, extra
 }
 
 forge_formula_default_process_predictors <- function(blueprint, predictors) {
-
   terms <- blueprint$terms$predictors
   terms <- alter_terms_environment(terms)
 
@@ -628,7 +618,7 @@ forge_formula_default_process_outcomes <- function(blueprint, outcomes) {
 # is no gurantee that the env above the global env is the same
 # as the one that was used in mold()
 alter_terms_environment <- function(terms_blueprint) {
-  env_above_global_env <- rlang::env_parent(rlang::global_env())
+  env_above_global_env <- env_parent(global_env())
   attr(terms_blueprint, ".Environment") <- env_above_global_env
   terms_blueprint
 }
@@ -642,24 +632,23 @@ expand_formula_dot_notation <- function(formula, data) {
   # if any `.` was present
   .terms <- terms(formula, data = data)
 
-  rlang::new_formula(
-    lhs = rlang::f_lhs(.terms),
-    rhs = rlang::f_rhs(.terms),
-    env = rlang::f_env(.terms)
+  new_formula(
+    lhs = f_lhs(.terms),
+    rhs = f_rhs(.terms),
+    env = f_env(.terms)
   )
 }
 
 nuke_formula_environment <- function(formula) {
-  rlang::new_formula(
-    lhs = rlang::f_lhs(formula),
-    rhs = rlang::f_rhs(formula),
-    env = rlang::empty_env()
+  new_formula(
+    lhs = f_lhs(formula),
+    rhs = f_rhs(formula),
+    env = empty_env()
   )
 }
 
 validate_is_terms_list_or_null <- function(terms) {
-
-  validate_is(terms, rlang::is_list, "list")
+  validate_is(terms, is_list, "list")
 
   validate_has_name(terms, "terms", "predictors")
   validate_has_name(terms, "terms", "outcomes")
@@ -680,11 +669,11 @@ alter_formula_environment <- function(formula) {
   # formula environment is 1 step above global env to avoid
   # global variables but maintain ability to use pkg functions
   # (like stats::poly())
-  env_above_global_env <- rlang::env_parent(rlang::global_env())
+  env_above_global_env <- env_parent(global_env())
 
-  rlang::new_formula(
-    lhs = rlang::f_lhs(formula),
-    rhs = rlang::f_rhs(formula),
+  new_formula(
+    lhs = f_lhs(formula),
+    rhs = f_rhs(formula),
     env = env_above_global_env
   )
 }
@@ -695,7 +684,6 @@ alter_formula_environment <- function(formula) {
 # complex on the LHS like poly(, degree = 2) that returns
 # a matrix
 flatten_embedded_columns <- function(data) {
-
   has_embedded_2D <- vapply(
     X = data,
     FUN = function(col) dims(col) > 1,
@@ -710,7 +698,7 @@ flatten_embedded_columns <- function(data) {
     # https://stackoverflow.com/questions/43281803/embedded-data-frame-in-r-what-is-it-what-is-it-called-why-does-it-behave-th
     # This could probably be better?
     # It doesn't work with tibble(!!!x)
-    frame_flattener <- rlang::expr(
+    frame_flattener <- expr(
       data.frame(
         !!!data,
         check.names = FALSE,
@@ -718,14 +706,13 @@ flatten_embedded_columns <- function(data) {
       )
     )
 
-    data <- rlang::eval_bare(frame_flattener)
+    data <- eval_bare(frame_flattener)
   }
 
   tibble::as_tibble(data)
 }
 
 validate_no_factorish_in_functions <- function(.formula, .factorish_names) {
-
   .terms <- terms(.formula)
 
   bad_original_cols <- detect_factorish_in_functions(.terms, .factorish_names)
@@ -733,7 +720,6 @@ validate_no_factorish_in_functions <- function(.formula, .factorish_names) {
   ok <- length(bad_original_cols) == 0L
 
   if (!ok) {
-
     bad_original_cols <- glue_quote_collapse(bad_original_cols)
 
     glubort(
@@ -742,7 +728,6 @@ validate_no_factorish_in_functions <- function(.formula, .factorish_names) {
       "Functions involving factors were detected for the following columns: ",
       "{bad_original_cols}."
     )
-
   }
 
   invisible(.formula)
@@ -753,7 +738,6 @@ validate_no_factorish_in_functions <- function(.formula, .factorish_names) {
 # The row.names() of the factors matrix contains all of the
 # non-interaction expressions that are used in the formula
 detect_factorish_in_functions <- function(.terms, .factorish_names) {
-
   terms_matrix <- attr(.terms, "factors")
 
   only_intercept_or_offsets <- length(terms_matrix) == 0L
@@ -770,7 +754,7 @@ detect_factorish_in_functions <- function(.terms, .factorish_names) {
     return(character(0))
   }
 
-  candidate_exprs <- rlang::parse_exprs(candidate_chrs)
+  candidate_exprs <- parse_exprs(candidate_chrs)
 
   # Look for each factorish name in the list of candidate expressions
   factorish_name_is_in_a_fn <- map_lgl(
@@ -801,7 +785,6 @@ validate_no_factorish_in_interactions <- function(.formula, .factorish_names) {
   ok <- length(bad_original_cols) == 0L
 
   if (!ok) {
-
     bad_original_cols <- glue_quote_collapse(bad_original_cols)
 
     glubort(
@@ -810,7 +793,6 @@ validate_no_factorish_in_interactions <- function(.formula, .factorish_names) {
       "Interactions involving factors were detected for the following columns: ",
       "{bad_original_cols}."
     )
-
   }
 
   invisible(.formula)
@@ -820,7 +802,6 @@ validate_no_factorish_in_interactions <- function(.formula, .factorish_names) {
 # of any factor / character columns that are present
 # in any interaction terms (from : or * or %in% or ^)
 detect_factorish_in_interactions <- function(.terms, .factorish_names) {
-
   terms_matrix <- attr(.terms, "factors")
 
   only_intercept_or_offsets <- length(terms_matrix) == 0L
@@ -851,7 +832,7 @@ detect_factorish_in_interactions <- function(.terms, .factorish_names) {
   # In the factor matrix, only `:` is present to represent interactions,
   # even if something like * or ^ or %in% was used to generate it
   terms_names <- colnames(factorish_rows)
-  terms_exprs <- rlang::parse_exprs(terms_names)
+  terms_exprs <- parse_exprs(terms_names)
   has_interactions <- map_lgl(terms_exprs, expr_contains, what = as.name(":"))
 
   none_have_interactions <- !any(has_interactions)
@@ -870,7 +851,6 @@ detect_factorish_in_interactions <- function(.terms, .factorish_names) {
 }
 
 validate_no_interactions <- function(.formula) {
-
   bad_terms <- detect_interactions(.formula)
 
   no_interactions <- length(bad_terms) == 0L
@@ -889,7 +869,6 @@ validate_no_interactions <- function(.formula) {
 # Returns processed names of any interaction terms
 # like 'Species:Sepal.Width', or character(0)
 detect_interactions <- function(.formula) {
-
   .terms <- terms(.formula)
 
   terms_matrix <- attr(.terms, "factors")
@@ -902,7 +881,7 @@ detect_interactions <- function(.formula) {
   terms_names <- colnames(terms_matrix)
 
   # All interactions (*, ^, %in%) will be expanded to `:`
-  terms_exprs <- rlang::parse_exprs(terms_names)
+  terms_exprs <- parse_exprs(terms_names)
   has_interactions <- map_lgl(terms_exprs, expr_contains, what = as.name(":"))
 
   has_any_interactions <- any(has_interactions)
@@ -917,18 +896,17 @@ detect_interactions <- function(.formula) {
 }
 
 expr_contains <- function(expr, what, ..., include_function_names = TRUE) {
-  if (!rlang::is_expression(expr)) {
-    rlang::abort("`expr` must be an expression.")
+  if (!is_expression(expr)) {
+    abort("`expr` must be an expression.")
   }
-  if (!rlang::is_symbol(what)) {
-    rlang::abort("`what` must be a symbol.")
+  if (!is_symbol(what)) {
+    abort("`what` must be a symbol.")
   }
 
   expr_contains_recurse(expr, what, include_function_names)
 }
 expr_contains_recurse <- function(expr, what, include_function_names) {
-  switch (
-    typeof(expr),
+  switch(typeof(expr),
     symbol = identical(expr, what),
     language = language_contains(expr, what, include_function_names),
     FALSE
@@ -936,7 +914,7 @@ expr_contains_recurse <- function(expr, what, include_function_names) {
 }
 language_contains <- function(expr, what, include_function_names) {
   if (length(expr) == 0L) {
-    rlang::abort("Internal error, `expr` should be at least length 1.")
+    abort("Internal error, `expr` should be at least length 1.")
   }
 
   if (!include_function_names) {
@@ -968,47 +946,44 @@ is_factorish <- function(x) {
 }
 
 remove_factorish_from_formula <- function(.formula, .factorish_names) {
-
   if (length(.factorish_names) == 0L) {
     return(.formula)
   }
 
-  .factorish_syms <- rlang::syms(.factorish_names)
+  .factorish_syms <- syms(.factorish_names)
 
-  .f_rhs <- rlang::f_rhs(.formula)
+  .f_rhs <- f_rhs(.formula)
 
   for (.factorish_sym in .factorish_syms) {
-    .f_rhs <- rlang::expr(!! .f_rhs - !! .factorish_sym)
+    .f_rhs <- expr(!!.f_rhs - !!.factorish_sym)
   }
 
-  rlang::new_formula(
-    lhs = rlang::f_lhs(.formula),
+  new_formula(
+    lhs = f_lhs(.formula),
     rhs = .f_rhs,
-    env = rlang::f_env(.formula)
+    env = f_env(.formula)
   )
 }
 
 reattach_factorish_columns <- function(predictors, data, factorish_names) {
   data_factorish_cols <- data[, factorish_names, drop = FALSE]
-  tibble::add_column(predictors, !!! data_factorish_cols)
+  tibble::add_column(predictors, !!!data_factorish_cols)
 }
 
 get_predictors_formula <- function(formula) {
-  rlang::new_formula(
+  new_formula(
     lhs = NULL,
-    rhs = rlang::f_rhs(formula),
-    env = rlang::f_env(formula)
+    rhs = f_rhs(formula),
+    env = f_env(formula)
   )
 }
 
 get_outcomes_formula <- function(formula) {
-
-  new_formula <- rlang::new_formula(
+  new_formula <- new_formula(
     lhs = NULL,
-    rhs = rlang::f_lhs(formula),
-    env = rlang::f_env(formula)
+    rhs = f_lhs(formula),
+    env = f_env(formula)
   )
 
   remove_formula_intercept(new_formula, intercept = FALSE)
 }
-

@@ -1,3 +1,33 @@
+# hardhat 1.0.0
+
+* Recipe preprocessors now ignore non-standard recipe roles (i.e. not
+  `"outcome"` or `"predictor"`) by default when calling `forge()`. Previously,
+  it was assumed that all non-standard role columns present in the original
+  training data were also required in the test data when `forge()` is called.
+  It seems to be more often the case that those columns are actually not
+  required to `bake()` new data, and often won't even be present when making
+  predictions on new data. For example, a custom `"case_weights"` role might be
+  required for computing case-weighted estimates at `prep()` time, but won't
+  be necessary at `bake()` time (since the estimates have already been
+  pre-computed and stored). To account for the case when you do require a
+  specific non-standard role to be present at `bake()` time,
+  `default_recipe_blueprint()` has gained a new argument,
+  `bake_dependent_roles`, which can be set to a character vector of
+  non-standard roles that are required.
+
+* New `weighted_table()` for generating a weighted contingency table, similar to
+  `table()` (#191).
+
+* New experimental family of functions for working with case weights. In
+  particular, `frequency_weights()` and `importance_weights()` (#190).
+
+* `use_modeling_files()` and `create_modeling_package()` no longer open the
+  package documentation file in the current RStudio session (#192).
+
+* rlang >=1.0.2 and vctrs >=0.4.1 are now required.
+
+* Bumped required R version to `>= 3.4.0` to reflect tidyverse standards.
+
 # hardhat 0.2.0
 
 * Moved `tune()` from tune to hardhat (#181).

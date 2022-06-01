@@ -49,13 +49,16 @@ create_modeling_package <- function(path,
                                     model,
                                     fields = NULL,
                                     open = interactive()) {
+  check_required(path)
+  check_required(model)
+
   validate_installed("usethis")
   validate_installed("roxygen2")
   validate_installed("devtools")
   validate_installed("recipes")
 
   # Avoid creating files if a bad model is supplied
-  if (!rlang::is_string(model)) {
+  if (!is_string(model)) {
     abort("`model` must be a single string.")
   }
 
@@ -73,10 +76,13 @@ create_modeling_package <- function(path,
   use_modeling_deps()
   use_modeling_files_impl(model, prompt_document = FALSE)
 
+  # Use the same option as used by the usethis `ui_*()` family
+  quiet <- getOption("usethis.quiet", default = FALSE)
+
   # Only auto-document when creating _new_ packages
   # Must explicitly set the pkg path
   usethis::ui_info("Running {usethis::ui_code('devtools::document()')}")
-  devtools::document(pkg = usethis::proj_get())
+  devtools::document(pkg = usethis::proj_get(), quiet = quiet)
   ui_blank_line()
 
   # copied from create_package()
@@ -120,7 +126,7 @@ use_modeling_files <- function(model) {
 use_modeling_files_impl <- function(model, prompt_document = TRUE) {
   validate_installed("usethis")
 
-  if (!rlang::is_string(model)) {
+  if (!is_string(model)) {
     abort("`model` must be a string.")
   }
 
@@ -144,7 +150,7 @@ use_modeling_files_impl <- function(model, prompt_document = TRUE) {
   path_predict <- glue::glue("R/{model}-predict.R")
 
   usethis::ui_info("Writing skeleton files")
-  usethis::use_package_doc()
+  usethis::use_package_doc(open = FALSE)
   use_hardhat_template("R/constructor.R", path_constructor)
   use_hardhat_template("R/fit.R", path_fit)
   use_hardhat_template("R/predict.R", path_predict)
