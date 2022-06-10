@@ -697,11 +697,9 @@ by <code>forge()</code>.</p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>penguin_test_no_outcome <span class="ot">&lt;-</span> <span class="fu">subset</span>(penguin_test, <span class="at">select =</span> <span class="sc">-</span>bill_length_mm)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="fu">forge</span>(penguin_test_no_outcome, recipe_eng_log_outcome)</span>
-<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error:</span></span>
-<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ! Assigned data `new_data[[column]] - mean` must be compatible with existing data.</span></span>
-<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✖ Existing data has 33 rows.</span></span>
-<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✖ Assigned data has 0 rows.</span></span>
-<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ℹ Only vectors of size 1 are recycled.</span></span></code></pre></div>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; Error in `vectbl_as_col_location()`:</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ! Can&#39;t subset columns that don&#39;t exist.</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a><span class="co">#&gt; ✖ Column `bill_length_mm` doesn&#39;t exist.</span></span></code></pre></div>
 <p>The way around this is to use the built-in recipe argument,
 <code>skip</code>, on the step containing the outcome. This skips the
 processing of that step at <code>bake()</code> time.</p>

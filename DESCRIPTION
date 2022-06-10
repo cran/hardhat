@@ -1,6 +1,6 @@
 Package: hardhat
 Title: Construct Modeling Packages
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: c(
     person("Davis", "Vaughan", , "davis@rstudio.com", role = c("aut", "cre")),
     person("Max", "Kuhn", , "max@rstudio.com", role = "aut"),
@@ -32,9 +32,9 @@ LazyData: true
 RoxygenNote: 7.2.0
 Config/testthat/edition: 3
 NeedsCompilation: no
-Packaged: 2022-06-01 18:05:19 UTC; davis
+Packaged: 2022-06-10 13:03:30 UTC; davis
 Author: Davis Vaughan [aut, cre],
   Max Kuhn [aut],
   RStudio [cph, fnd]
 Repository: CRAN
-Date/Publication: 2022-06-01 21:30:10 UTC
+Date/Publication: 2022-06-10 15:30:05 UTC

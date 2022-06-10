@@ -128,12 +128,7 @@
 default_xy_blueprint <- function(intercept = FALSE,
                                  allow_novel_levels = FALSE,
                                  composition = "tibble") {
-  mold <- get_mold_xy_default_function_set()
-  forge <- get_forge_xy_default_function_set()
-
   new_default_xy_blueprint(
-    mold = mold,
-    forge = forge,
     intercept = intercept,
     allow_novel_levels = allow_novel_levels,
     composition = composition
@@ -153,17 +148,13 @@ default_xy_blueprint <- function(intercept = FALSE,
 #'
 #' @name new-default-blueprint
 #' @export
-new_default_xy_blueprint <- function(mold,
-                                     forge,
-                                     intercept = FALSE,
+new_default_xy_blueprint <- function(intercept = FALSE,
                                      allow_novel_levels = FALSE,
                                      composition = "tibble",
                                      ptypes = NULL,
                                      ...,
                                      subclass = character()) {
   new_xy_blueprint(
-    mold = mold,
-    forge = forge,
     intercept = intercept,
     allow_novel_levels = allow_novel_levels,
     composition = composition,
@@ -180,11 +171,27 @@ refresh_blueprint.default_xy_blueprint <- function(blueprint) {
 
 # ------------------------------------------------------------------------------
 
-get_mold_xy_default_function_set <- function() {
-  blueprint_function_set(mold_xy_default_clean, mold_xy_default_process)
+#' @param x A data frame or matrix containing the predictors.
+#'
+#' @param y A data frame, matrix, or vector containing the outcomes.
+#'
+#' @rdname run-mold
+#' @export
+run_mold.default_xy_blueprint <- function(blueprint, ..., x, y) {
+  check_dots_empty0(...)
+
+  cleaned <- mold_xy_default_clean(blueprint = blueprint, x = x, y = y)
+
+  blueprint <- cleaned$blueprint
+  x <- cleaned$x
+  y <- cleaned$y
+
+  mold_xy_default_process(blueprint = blueprint, x = x, y = y)
 }
 
+# ------------------------------------------------------------------------------
 # mold - xy - clean
+
 mold_xy_default_clean <- function(blueprint, x, y) {
   cleaned <- mold_xy_default_clean_predictors(blueprint, x)
 
@@ -201,7 +208,7 @@ mold_xy_default_clean <- function(blueprint, x, y) {
   blueprint <- cleaned$blueprint
   y <- cleaned$y
 
-  out$mold$clean_xy(blueprint, x, y)
+  new_mold_clean_xy(blueprint, x, y)
 }
 
 mold_xy_default_clean_predictors <- function(blueprint, x) {
@@ -214,22 +221,30 @@ mold_xy_default_clean_outcomes <- function(blueprint, y) {
   list(blueprint = blueprint, y = y)
 }
 
+# ------------------------------------------------------------------------------
 # mold - xy - process
+
 mold_xy_default_process <- function(blueprint, x, y) {
   processed <- mold_xy_default_process_predictors(blueprint, x)
 
   blueprint <- processed$blueprint
-  predictors_lst <- processed$terms_lst
+  predictors <- processed$data
+  predictors_ptype <- processed$ptype
+  predictors_extras <- processed$extras
 
   processed <- mold_xy_default_process_outcomes(blueprint, y)
 
   blueprint <- processed$blueprint
-  outcomes_lst <- processed$terms_lst
+  outcomes <- processed$data
+  outcomes_ptype <- processed$ptype
+  outcomes_extras <- processed$extras
 
-  ptypes <- out$ptypes$final(predictors_lst$ptype, outcomes_lst$ptype)
-  extras <- out$extras$final(predictors_lst$extras, outcomes_lst$extras)
+  ptypes <- new_ptypes(predictors_ptype, outcomes_ptype)
+  extras <- new_extras(predictors_extras, outcomes_extras)
 
-  out$mold$process(blueprint, predictors_lst$data, outcomes_lst$data, ptypes, extras)
+  blueprint <- update_blueprint(blueprint, ptypes = ptypes)
+
+  new_mold_process(predictors, outcomes, blueprint, extras)
 }
 
 mold_xy_default_process_predictors <- function(blueprint, x) {
@@ -241,24 +256,53 @@ mold_xy_default_process_predictors <- function(blueprint, x) {
 
   x <- recompose(x, blueprint$composition)
 
-  predictors_lst <- out$mold$process_terms_lst(data = x, ptype)
-
-  out$mold$process_terms(blueprint, predictors_lst)
+  new_mold_process_terms(
+    blueprint = blueprint,
+    data = x,
+    ptype = ptype
+  )
 }
 
 mold_xy_default_process_outcomes <- function(blueprint, y) {
   ptype <- extract_ptype(y)
 
-  outcomes_lst <- out$mold$process_terms_lst(data = y, ptype)
-
-  out$mold$process_terms(blueprint, outcomes_lst)
+  new_mold_process_terms(
+    blueprint = blueprint,
+    data = y,
+    ptype = ptype
+  )
 }
 
 # ------------------------------------------------------------------------------
 
-get_forge_xy_default_function_set <- function() {
-  blueprint_function_set(forge_xy_default_clean, forge_xy_default_process)
+#' @rdname run-forge
+#' @export
+run_forge.default_xy_blueprint <- function(blueprint,
+                                           new_data,
+                                           ...,
+                                           outcomes = FALSE) {
+  check_dots_empty0(...)
+
+  cleaned <- forge_xy_default_clean(
+    blueprint = blueprint,
+    new_data = new_data,
+    outcomes = outcomes
+  )
+
+  blueprint <- cleaned$blueprint
+  predictors <- cleaned$predictors
+  outcomes <- cleaned$outcomes
+  extras <- cleaned$extras
+
+  forge_xy_default_process(
+    blueprint = blueprint,
+    predictors = predictors,
+    outcomes = outcomes,
+    extras = extras
+  )
 }
+
+# ------------------------------------------------------------------------------
 
 forge_xy_default_clean <- function(blueprint, new_data, outcomes) {
   validate_is_new_data_like(new_data)
@@ -281,26 +325,30 @@ forge_xy_default_clean <- function(blueprint, new_data, outcomes) {
     outcomes <- NULL
   }
 
-  out$forge$clean(blueprint, predictors, outcomes)
+  new_forge_clean(blueprint, predictors, outcomes)
 }
+
+# ------------------------------------------------------------------------------
 
 forge_xy_default_process <- function(blueprint, predictors, outcomes, extras) {
   processed <- forge_xy_default_process_predictors(blueprint, predictors)
 
   blueprint <- processed$blueprint
-  predictors_lst <- processed$terms_lst
+  predictors <- processed$data
+  predictors_extras <- processed$extras
 
   processed <- forge_xy_default_process_outcomes(blueprint, outcomes)
 
   blueprint <- processed$blueprint
-  outcomes_lst <- processed$terms_lst
+  outcomes <- processed$data
+  outcomes_extras <- processed$extras
 
   extras <- c(
     extras,
-    out$extras$final(predictors_lst$extras, outcomes_lst$extras)
+    new_extras(predictors_extras, outcomes_extras)
   )
 
-  out$forge$process(predictors_lst$data, outcomes_lst$data, extras)
+  new_forge_process(predictors, outcomes, extras)
 }
 
 forge_xy_default_process_predictors <- function(blueprint, predictors) {
@@ -308,21 +356,25 @@ forge_xy_default_process_predictors <- function(blueprint, predictors) {
 
   predictors <- recompose(predictors, blueprint$composition)
 
-  predictors_lst <- out$forge$process_terms_lst(data = predictors)
-
-  out$forge$process_terms(blueprint, predictors_lst)
+  new_forge_process_terms(
+    blueprint = blueprint,
+    data = predictors
+  )
 }
 
 forge_xy_default_process_outcomes <- function(blueprint, outcomes) {
 
   # no outcomes to process
   if (is.null(outcomes)) {
-    outcomes_lst <- out$forge$process_terms_lst()
-    result <- out$forge$process_terms(blueprint, outcomes_lst)
+    result <- new_forge_process_terms(
+      blueprint = blueprint,
+      data = outcomes
+    )
     return(result)
   }
 
-  outcomes_lst <- out$forge$process_terms_lst(data = outcomes)
-
-  out$forge$process_terms(blueprint, outcomes_lst)
+  new_forge_process_terms(
+    blueprint = blueprint,
+    data = outcomes
+  )
 }
