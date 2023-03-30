@@ -108,6 +108,18 @@ test_that("`fresh` defaults to `TRUE`", {
   expect_identical(mold_fresh_mean2, fresh_mean)
 })
 
+test_that("can pass `strings_as_factors` through to `prep()`", {
+  df <- tibble(y = 1, x = "a")
+  rec <- recipes::recipe(y ~ x, data = df)
+
+  # Defaults to `TRUE`
+  x <- mold(rec, df)
+  expect_identical(x$predictors$x, factor("a"))
+
+  x <- mold(rec, df, blueprint = default_recipe_blueprint(strings_as_factors = FALSE))
+  expect_identical(x$predictors$x, "a")
+})
+
 test_that("`data` is validated", {
   expect_error(
     mold(recipes::recipe(Species ~ Sepal.Length, data = iris), 1),
@@ -151,9 +163,6 @@ test_that("non-standard roles ptypes are stored by default", {
 })
 
 test_that("case weights is not considered a required extra role by default", {
-  # If we have this, we also have case weight support
-  skip_if_no_update_role_requirements()
-
   iris$weight <- frequency_weights(seq_len(nrow(iris)))
 
   rec <- recipes::recipe(Species ~ ., iris)
@@ -177,8 +186,6 @@ test_that("case weights is not considered a required extra role by default", {
 })
 
 test_that("case weights can be updated to be a required extra role", {
-  skip_if_no_update_role_requirements()
-
   iris$weight <- frequency_weights(seq_len(nrow(iris)))
 
   rec <- recipes::recipe(Species ~ ., iris)
@@ -368,8 +375,6 @@ test_that("`NA` roles are treated as extra roles", {
 })
 
 test_that("roles that aren't required are not retained as `extra_role_ptypes`, but are in the mold result", {
-  skip_if_no_update_role_requirements()
-
   rec <- recipes::recipe(Species ~ ., iris)
   rec <- recipes::update_role(rec, Sepal.Width, new_role = "dummy1")
   rec <- recipes::update_role(rec, Sepal.Length, new_role = "dummy2")

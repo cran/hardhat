@@ -9,6 +9,7 @@ default_recipe_blueprint(
   intercept = FALSE,
   allow_novel_levels = FALSE,
   fresh = TRUE,
+  strings_as_factors = TRUE,
   composition = "tibble"
 )
 
@@ -25,6 +26,9 @@ prediction time? This information is used by the \code{clean} function in the
 
 \item{fresh}{Should already trained operations be re-trained when \code{prep()} is
 called?}
+
+\item{strings_as_factors}{Should character columns be converted to factors
+when \code{prep()} is called?}
 
 \item{composition}{Either "tibble", "matrix", or "dgCMatrix" for the format
 of the processed predictors. If "matrix" or "dgCMatrix" are chosen, all of
@@ -129,7 +133,6 @@ bp <- default_recipe_blueprint(composition = "dgCMatrix")
 processed <- mold(rec, train, blueprint = bp)
 class(processed$predictors)
 
-\dontshow{if (utils::packageVersion("recipes") >= "0.2.0.9002") (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # ---------------------------------------------------------------------------
 # Non standard roles
 
@@ -166,5 +169,4 @@ try(forge(test2, processed_roles$blueprint))
 rec_roles <- update_role_requirements(rec_roles, "important", bake = FALSE)
 processed_roles <- mold(rec_roles, train)
 forge(test2, processed_roles$blueprint)
-\dontshow{\}) # examplesIf}
 }
