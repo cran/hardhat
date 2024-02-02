@@ -49,7 +49,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -815,7 +815,7 @@ this automatically.</p>
 <span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="co">#&gt;  8  36.9</span></span>
 <span id="cb15-18"><a href="#cb15-18" tabindex="-1"></a><span class="co">#&gt;  9  39.2</span></span>
 <span id="cb15-19"><a href="#cb15-19" tabindex="-1"></a><span class="co">#&gt; 10  41.4</span></span>
-<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
+<span id="cb15-20"><a href="#cb15-20" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span></code></pre></div>
 </div>
 <div id="prediction-bridge" class="section level2">
 <h2>Prediction Bridge</h2>
@@ -865,7 +865,7 @@ allowed, and the error messages are a bit nicer.</p>
 <span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a><span class="co">#&gt;  8  36.9</span></span>
 <span id="cb17-18"><a href="#cb17-18" tabindex="-1"></a><span class="co">#&gt;  9  39.2</span></span>
 <span id="cb17-19"><a href="#cb17-19" tabindex="-1"></a><span class="co">#&gt; 10  41.4</span></span>
-<span id="cb17-20"><a href="#cb17-20" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span>
+<span id="cb17-20"><a href="#cb17-20" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span>
 <span id="cb17-21"><a href="#cb17-21" tabindex="-1"></a></span>
 <span id="cb17-22"><a href="#cb17-22" tabindex="-1"></a><span class="co"># Partial matches are an error</span></span>
 <span id="cb17-23"><a href="#cb17-23" tabindex="-1"></a><span class="fu">predict_simple_lm_bridge</span>(<span class="st">&quot;numer&quot;</span>, model, predictors)</span>
@@ -932,7 +932,7 @@ its corresponding <code>predict()</code> method.</p>
 <span id="cb19-14"><a href="#cb19-14" tabindex="-1"></a><span class="co">#&gt;  8  36.7</span></span>
 <span id="cb19-15"><a href="#cb19-15" tabindex="-1"></a><span class="co">#&gt;  9  39.3</span></span>
 <span id="cb19-16"><a href="#cb19-16" tabindex="-1"></a><span class="co">#&gt; 10  41.5</span></span>
-<span id="cb19-17"><a href="#cb19-17" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
+<span id="cb19-17"><a href="#cb19-17" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span></code></pre></div>
 <p>By using <code>forge()</code>, you automatically get powerful type
 checking to ensure that the <code>new_data</code> is in a form that you
 expect.</p>
@@ -965,7 +965,7 @@ expect.</p>
 <span id="cb20-27"><a href="#cb20-27" tabindex="-1"></a><span class="co">#&gt;  8  36.7</span></span>
 <span id="cb20-28"><a href="#cb20-28" tabindex="-1"></a><span class="co">#&gt;  9  39.3</span></span>
 <span id="cb20-29"><a href="#cb20-29" tabindex="-1"></a><span class="co">#&gt; 10  41.5</span></span>
-<span id="cb20-30"><a href="#cb20-30" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span>
+<span id="cb20-30"><a href="#cb20-30" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span>
 <span id="cb20-31"><a href="#cb20-31" tabindex="-1"></a></span>
 <span id="cb20-32"><a href="#cb20-32" tabindex="-1"></a><span class="co"># Slightly different from above. Here, &#39;species&#39; is a character, </span></span>
 <span id="cb20-33"><a href="#cb20-33" tabindex="-1"></a><span class="co"># AND has an extra unexpected factor level. It is </span></span>
@@ -990,7 +990,7 @@ expect.</p>
 <span id="cb20-52"><a href="#cb20-52" tabindex="-1"></a><span class="co">#&gt;  8  36.7</span></span>
 <span id="cb20-53"><a href="#cb20-53" tabindex="-1"></a><span class="co">#&gt;  9  39.3</span></span>
 <span id="cb20-54"><a href="#cb20-54" tabindex="-1"></a><span class="co">#&gt; 10  41.5</span></span>
-<span id="cb20-55"><a href="#cb20-55" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span>
+<span id="cb20-55"><a href="#cb20-55" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span>
 <span id="cb20-56"><a href="#cb20-56" tabindex="-1"></a></span>
 <span id="cb20-57"><a href="#cb20-57" tabindex="-1"></a><span class="co"># This case throws an error.</span></span>
 <span id="cb20-58"><a href="#cb20-58" tabindex="-1"></a><span class="co"># Here, &#39;species&#39; is a double and</span></span>

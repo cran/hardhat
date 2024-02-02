@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -101,7 +101,7 @@ simple_lm_bridge(processed_1)
 
 simple_lm_bridge(processed_2)
 
-## ---- error=TRUE--------------------------------------------------------------
+## ----error=TRUE---------------------------------------------------------------
 multi_outcome <- mold(bill_length_mm + bill_depth_mm ~ body_mass_g + species, penguins)
 
 simple_lm_bridge(multi_outcome)
@@ -158,7 +158,7 @@ simple_lm(predictors, outcomes_df)
 # Formula interface
 simple_lm(body_mass_g ~ bill_length_mm + bill_depth_mm, penguins)
 
-## ---- warning=FALSE, message=FALSE--------------------------------------------
+## ----warning=FALSE, message=FALSE---------------------------------------------
 library(recipes)
 
 # - Log a predictor
@@ -241,7 +241,7 @@ predict_simple_lm_bridge <- function(type, object, predictors) {
   )
 }
 
-## ---- error=TRUE--------------------------------------------------------------
+## ----error=TRUE---------------------------------------------------------------
 model <- simple_lm(bill_length_mm ~ body_mass_g + species, penguins)
 
 # Pass in the data frame
@@ -270,7 +270,7 @@ model <- simple_lm(bill_length_mm ~ log(body_mass_g) + species, penguins)
 
 predict(model, penguins)
 
-## ---- warning=TRUE, error=TRUE------------------------------------------------
+## ----warning=TRUE, error=TRUE-------------------------------------------------
 # `new_data` isn't a data frame
 predict(model, penguins$species)
 

@@ -1,3 +1,8 @@
+# hardhat 1.3.1
+
+* Changed an Rd name from `modeling-package` -> `modeling-usethis` at the
+  request of CRAN.
+
 # hardhat 1.3.0
 
 * New family of `spruce_*_multiple()` functions to support standardizing

@@ -49,7 +49,7 @@ overflow: visible;
 </style>
 <style type="text/css" data-origin="pandoc">
 pre > code.sourceCode { white-space: pre; position: relative; }
-pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span { line-height: 1.25; }
 pre > code.sourceCode > span:empty { height: 1.2em; }
 .sourceCode { overflow: visible; }
 code.sourceCode > span { color: inherit; text-decoration: inherit; }
@@ -402,7 +402,7 @@ just have to focus on the modeling implementation.</p>
 <span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a><span class="co">#&gt;  8                  3.72</span></span>
 <span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a><span class="co">#&gt;  9                  3.65</span></span>
 <span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a><span class="co">#&gt; 10                  3.54</span></span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span></code></pre></div>
 <p>Second is the <code>outcomes</code>, also returned as a tibble. While
 not used here, any processing on the outcome that was specified in the
 formula would also be done here.</p>
@@ -420,7 +420,7 @@ formula would also be done here.</p>
 <span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a><span class="co">#&gt;  8        3200</span></span>
 <span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a><span class="co">#&gt;  9        3800</span></span>
 <span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a><span class="co">#&gt; 10        4400</span></span>
-<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span></code></pre></div>
 <p>Beyond these two elements, <code>mold()</code> also returns a slot
 for any <code>extras</code> that might have been generated during
 preprocessing, but aren’t specifically predictors or outcomes. For
@@ -441,7 +441,7 @@ formula, but isn’t technically a predictor.</p>
 <span id="cb5-13"><a href="#cb5-13" tabindex="-1"></a><span class="co">#&gt;  8    17.6</span></span>
 <span id="cb5-14"><a href="#cb5-14" tabindex="-1"></a><span class="co">#&gt;  9    21.2</span></span>
 <span id="cb5-15"><a href="#cb5-15" tabindex="-1"></a><span class="co">#&gt; 10    21.1</span></span>
-<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
+<span id="cb5-16"><a href="#cb5-16" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span></code></pre></div>
 <p>Lastly, <code>mold()</code> returns a very important object, the
 <code>blueprint</code>. This is responsible for knowing how to
 preprocess both the training data, and any new data at prediction time.
@@ -501,7 +501,7 @@ controlled by the formula blueprint argument,
 <span id="cb7-14"><a href="#cb7-14" tabindex="-1"></a><span class="co">#&gt;  8        3200</span></span>
 <span id="cb7-15"><a href="#cb7-15" tabindex="-1"></a><span class="co">#&gt;  9        3800</span></span>
 <span id="cb7-16"><a href="#cb7-16" tabindex="-1"></a><span class="co">#&gt; 10        4400</span></span>
-<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
+<span id="cb7-17"><a href="#cb7-17" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span></code></pre></div>
 <div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>with_intercept <span class="ot">&lt;-</span> <span class="fu">mold</span>(</span>
 <span id="cb8-2"><a href="#cb8-2" tabindex="-1"></a>  <span class="sc">~</span> body_mass_g, penguins, </span>
 <span id="cb8-3"><a href="#cb8-3" tabindex="-1"></a>  <span class="at">blueprint =</span> <span class="fu">default_formula_blueprint</span>(<span class="at">intercept =</span> <span class="cn">TRUE</span>)</span>
@@ -521,7 +521,7 @@ controlled by the formula blueprint argument,
 <span id="cb8-17"><a href="#cb8-17" tabindex="-1"></a><span class="co">#&gt;  8             1        3200</span></span>
 <span id="cb8-18"><a href="#cb8-18" tabindex="-1"></a><span class="co">#&gt;  9             1        3800</span></span>
 <span id="cb8-19"><a href="#cb8-19" tabindex="-1"></a><span class="co">#&gt; 10             1        4400</span></span>
-<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
+<span id="cb8-20"><a href="#cb8-20" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span></code></pre></div>
 <p>An error is thrown if an intercept removal term is specified:</p>
 <div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a><span class="fu">mold</span>(<span class="sc">~</span> body_mass_g <span class="sc">-</span> <span class="dv">1</span>, penguins)</span>
 <span id="cb9-2"><a href="#cb9-2" tabindex="-1"></a><span class="co">#&gt; Error in `mold_formula_default_clean()`:</span></span>
@@ -556,7 +556,7 @@ the blueprint argument, <code>indicators</code>.</p>
 <span id="cb10-14"><a href="#cb10-14" tabindex="-1"></a><span class="co">#&gt;  8        3200             1                0             0</span></span>
 <span id="cb10-15"><a href="#cb10-15" tabindex="-1"></a><span class="co">#&gt;  9        3800             1                0             0</span></span>
 <span id="cb10-16"><a href="#cb10-16" tabindex="-1"></a><span class="co">#&gt; 10        4400             1                0             0</span></span>
-<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
+<span id="cb10-17"><a href="#cb10-17" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" tabindex="-1"></a>non_expanded_dummies <span class="ot">&lt;-</span> <span class="fu">mold</span>(</span>
 <span id="cb11-2"><a href="#cb11-2" tabindex="-1"></a>  <span class="sc">~</span> body_mass_g <span class="sc">+</span> species, penguins, </span>
 <span id="cb11-3"><a href="#cb11-3" tabindex="-1"></a>  <span class="at">blueprint =</span> <span class="fu">default_formula_blueprint</span>(<span class="at">indicators =</span> <span class="st">&quot;none&quot;</span>)</span>
@@ -576,7 +576,7 @@ the blueprint argument, <code>indicators</code>.</p>
 <span id="cb11-17"><a href="#cb11-17" tabindex="-1"></a><span class="co">#&gt;  8        3200 Adelie </span></span>
 <span id="cb11-18"><a href="#cb11-18" tabindex="-1"></a><span class="co">#&gt;  9        3800 Adelie </span></span>
 <span id="cb11-19"><a href="#cb11-19" tabindex="-1"></a><span class="co">#&gt; 10        4400 Adelie </span></span>
-<span id="cb11-20"><a href="#cb11-20" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
+<span id="cb11-20"><a href="#cb11-20" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span></code></pre></div>
 <p><em>Note:</em> It’s worth mentioning that when an intercept is not
 present, base R expands the first factor completely into <code>K</code>
 indicator columns corresponding to the <code>K</code> levels present in
@@ -659,7 +659,7 @@ are doing very much of that, I’d advise using a recipe instead.
 <span id="cb15-14"><a href="#cb15-14" tabindex="-1"></a><span class="co">#&gt;  8        3200                  3.72</span></span>
 <span id="cb15-15"><a href="#cb15-15" tabindex="-1"></a><span class="co">#&gt;  9        3800                  3.65</span></span>
 <span id="cb15-16"><a href="#cb15-16" tabindex="-1"></a><span class="co">#&gt; 10        4400                  3.54</span></span>
-<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
+<span id="cb15-17"><a href="#cb15-17" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span></code></pre></div>
 </div>
 </div>
 <div id="xy" class="section level2">
@@ -685,7 +685,7 @@ and outcomes are specified separately.</p>
 <span id="cb16-17"><a href="#cb16-17" tabindex="-1"></a><span class="co">#&gt;  8 Adelie  Torgersen           41.1          17.6               182 female</span></span>
 <span id="cb16-18"><a href="#cb16-18" tabindex="-1"></a><span class="co">#&gt;  9 Adelie  Torgersen           38.6          21.2               191 male  </span></span>
 <span id="cb16-19"><a href="#cb16-19" tabindex="-1"></a><span class="co">#&gt; 10 Adelie  Torgersen           34.6          21.1               198 male  </span></span>
-<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span>
+<span id="cb16-20"><a href="#cb16-20" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span>
 <span id="cb16-21"><a href="#cb16-21" tabindex="-1"></a></span>
 <span id="cb16-22"><a href="#cb16-22" tabindex="-1"></a>penguin_xy<span class="sc">$</span>outcomes</span>
 <span id="cb16-23"><a href="#cb16-23" tabindex="-1"></a><span class="co">#&gt; # A tibble: 333 × 1</span></span>
@@ -701,7 +701,7 @@ and outcomes are specified separately.</p>
 <span id="cb16-33"><a href="#cb16-33" tabindex="-1"></a><span class="co">#&gt;  8        3200</span></span>
 <span id="cb16-34"><a href="#cb16-34" tabindex="-1"></a><span class="co">#&gt;  9        3800</span></span>
 <span id="cb16-35"><a href="#cb16-35" tabindex="-1"></a><span class="co">#&gt; 10        4400</span></span>
-<span id="cb16-36"><a href="#cb16-36" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
+<span id="cb16-36"><a href="#cb16-36" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span></code></pre></div>
 <p>This interface doesn’t do too much in the way of preprocessing, but
 it does let you specify an <code>intercept</code> in the blueprint
 specific arguments. Rather than
@@ -711,19 +711,20 @@ specific arguments. Rather than
 <span id="cb17-2"><a href="#cb17-2" tabindex="-1"></a></span>
 <span id="cb17-3"><a href="#cb17-3" tabindex="-1"></a>xy_with_intercept<span class="sc">$</span>predictors</span>
 <span id="cb17-4"><a href="#cb17-4" tabindex="-1"></a><span class="co">#&gt; # A tibble: 333 × 7</span></span>
-<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a><span class="co">#&gt;    `(Intercept)` species island    bill_length_mm bill_depth_mm flipper_…¹ sex  </span></span>
-<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a><span class="co">#&gt;            &lt;int&gt; &lt;fct&gt;   &lt;fct&gt;              &lt;dbl&gt;         &lt;dbl&gt;      &lt;int&gt; &lt;fct&gt;</span></span>
-<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a><span class="co">#&gt;  1             1 Adelie  Torgersen           39.1          18.7        181 male </span></span>
-<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a><span class="co">#&gt;  2             1 Adelie  Torgersen           39.5          17.4        186 fema…</span></span>
-<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a><span class="co">#&gt;  3             1 Adelie  Torgersen           40.3          18          195 fema…</span></span>
-<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a><span class="co">#&gt;  4             1 Adelie  Torgersen           36.7          19.3        193 fema…</span></span>
-<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a><span class="co">#&gt;  5             1 Adelie  Torgersen           39.3          20.6        190 male </span></span>
-<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a><span class="co">#&gt;  6             1 Adelie  Torgersen           38.9          17.8        181 fema…</span></span>
-<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a><span class="co">#&gt;  7             1 Adelie  Torgersen           39.2          19.6        195 male </span></span>
-<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a><span class="co">#&gt;  8             1 Adelie  Torgersen           41.1          17.6        182 fema…</span></span>
-<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a><span class="co">#&gt;  9             1 Adelie  Torgersen           38.6          21.2        191 male </span></span>
-<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a><span class="co">#&gt; 10             1 Adelie  Torgersen           34.6          21.1        198 male </span></span>
-<span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows, and abbreviated variable name ¹​flipper_length_mm</span></span></code></pre></div>
+<span id="cb17-5"><a href="#cb17-5" tabindex="-1"></a><span class="co">#&gt;    `(Intercept)` species island   bill_length_mm bill_depth_mm flipper_length_mm</span></span>
+<span id="cb17-6"><a href="#cb17-6" tabindex="-1"></a><span class="co">#&gt;            &lt;int&gt; &lt;fct&gt;   &lt;fct&gt;             &lt;dbl&gt;         &lt;dbl&gt;             &lt;int&gt;</span></span>
+<span id="cb17-7"><a href="#cb17-7" tabindex="-1"></a><span class="co">#&gt;  1             1 Adelie  Torgers…           39.1          18.7               181</span></span>
+<span id="cb17-8"><a href="#cb17-8" tabindex="-1"></a><span class="co">#&gt;  2             1 Adelie  Torgers…           39.5          17.4               186</span></span>
+<span id="cb17-9"><a href="#cb17-9" tabindex="-1"></a><span class="co">#&gt;  3             1 Adelie  Torgers…           40.3          18                 195</span></span>
+<span id="cb17-10"><a href="#cb17-10" tabindex="-1"></a><span class="co">#&gt;  4             1 Adelie  Torgers…           36.7          19.3               193</span></span>
+<span id="cb17-11"><a href="#cb17-11" tabindex="-1"></a><span class="co">#&gt;  5             1 Adelie  Torgers…           39.3          20.6               190</span></span>
+<span id="cb17-12"><a href="#cb17-12" tabindex="-1"></a><span class="co">#&gt;  6             1 Adelie  Torgers…           38.9          17.8               181</span></span>
+<span id="cb17-13"><a href="#cb17-13" tabindex="-1"></a><span class="co">#&gt;  7             1 Adelie  Torgers…           39.2          19.6               195</span></span>
+<span id="cb17-14"><a href="#cb17-14" tabindex="-1"></a><span class="co">#&gt;  8             1 Adelie  Torgers…           41.1          17.6               182</span></span>
+<span id="cb17-15"><a href="#cb17-15" tabindex="-1"></a><span class="co">#&gt;  9             1 Adelie  Torgers…           38.6          21.2               191</span></span>
+<span id="cb17-16"><a href="#cb17-16" tabindex="-1"></a><span class="co">#&gt; 10             1 Adelie  Torgers…           34.6          21.1               198</span></span>
+<span id="cb17-17"><a href="#cb17-17" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span>
+<span id="cb17-18"><a href="#cb17-18" tabindex="-1"></a><span class="co">#&gt; # ℹ 1 more variable: sex &lt;fct&gt;</span></span></code></pre></div>
 <div id="vector-outcomes" class="section level3">
 <h3>Vector outcomes</h3>
 <p><code>y</code> is a bit special in the XY interface, because in the
@@ -748,7 +749,7 @@ column name is created, <code>&quot;.outcome&quot;</code>.</p>
 <span id="cb18-12"><a href="#cb18-12" tabindex="-1"></a><span class="co">#&gt;  8     3200</span></span>
 <span id="cb18-13"><a href="#cb18-13" tabindex="-1"></a><span class="co">#&gt;  9     3800</span></span>
 <span id="cb18-14"><a href="#cb18-14" tabindex="-1"></a><span class="co">#&gt; 10     4400</span></span>
-<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
+<span id="cb18-15"><a href="#cb18-15" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span></code></pre></div>
 </div>
 </div>
 <div id="recipe" class="section level2">
@@ -780,7 +781,7 @@ preprocess your data.</p>
 <span id="cb19-20"><a href="#cb19-20" tabindex="-1"></a><span class="co">#&gt;  8          17.6                 0              0</span></span>
 <span id="cb19-21"><a href="#cb19-21" tabindex="-1"></a><span class="co">#&gt;  9          21.2                 0              0</span></span>
 <span id="cb19-22"><a href="#cb19-22" tabindex="-1"></a><span class="co">#&gt; 10          21.1                 0              0</span></span>
-<span id="cb19-23"><a href="#cb19-23" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span>
+<span id="cb19-23"><a href="#cb19-23" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span>
 <span id="cb19-24"><a href="#cb19-24" tabindex="-1"></a></span>
 <span id="cb19-25"><a href="#cb19-25" tabindex="-1"></a>penguin_recipe<span class="sc">$</span>outcomes</span>
 <span id="cb19-26"><a href="#cb19-26" tabindex="-1"></a><span class="co">#&gt; # A tibble: 333 × 1</span></span>
@@ -796,7 +797,7 @@ preprocess your data.</p>
 <span id="cb19-36"><a href="#cb19-36" tabindex="-1"></a><span class="co">#&gt;  8           3.72</span></span>
 <span id="cb19-37"><a href="#cb19-37" tabindex="-1"></a><span class="co">#&gt;  9           3.65</span></span>
 <span id="cb19-38"><a href="#cb19-38" tabindex="-1"></a><span class="co">#&gt; 10           3.54</span></span>
-<span id="cb19-39"><a href="#cb19-39" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
+<span id="cb19-39"><a href="#cb19-39" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span></code></pre></div>
 <p>The only special thing you can tweak with the recipe blueprint is
 whether or not an intercept is added.</p>
 <div class="sourceCode" id="cb20"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" tabindex="-1"></a>recipe_with_intercept <span class="ot">&lt;-</span> <span class="fu">mold</span>(</span>
@@ -818,7 +819,7 @@ whether or not an intercept is added.</p>
 <span id="cb20-17"><a href="#cb20-17" tabindex="-1"></a><span class="co">#&gt;  8             1          17.6                 0              0</span></span>
 <span id="cb20-18"><a href="#cb20-18" tabindex="-1"></a><span class="co">#&gt;  9             1          21.2                 0              0</span></span>
 <span id="cb20-19"><a href="#cb20-19" tabindex="-1"></a><span class="co">#&gt; 10             1          21.1                 0              0</span></span>
-<span id="cb20-20"><a href="#cb20-20" tabindex="-1"></a><span class="co">#&gt; # … with 323 more rows</span></span></code></pre></div>
+<span id="cb20-20"><a href="#cb20-20" tabindex="-1"></a><span class="co">#&gt; # ℹ 323 more rows</span></span></code></pre></div>
 </div>
 
 

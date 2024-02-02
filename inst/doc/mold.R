@@ -1,4 +1,4 @@
-## ---- include = FALSE---------------------------------------------------------
+## ----include = FALSE----------------------------------------------------------
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
@@ -46,7 +46,7 @@ with_intercept <- mold(
 
 with_intercept$predictors
 
-## ---- error=TRUE--------------------------------------------------------------
+## ----error=TRUE---------------------------------------------------------------
 mold(~ body_mass_g - 1, penguins)
 
 mold(~ body_mass_g + 0, penguins)
@@ -113,7 +113,7 @@ xy_with_intercept$predictors
 ## -----------------------------------------------------------------------------
 mold(x, y$body_mass_g)$outcomes
 
-## ---- message=FALSE, warning=FALSE--------------------------------------------
+## ----message=FALSE, warning=FALSE---------------------------------------------
 library(recipes)
 
 rec <- recipe(bill_length_mm ~ species + bill_depth_mm, penguins) %>%
