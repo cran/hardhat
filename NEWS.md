@@ -1,3 +1,9 @@
+# hardhat 1.4.0
+
+* Added `extract_postprocessor()` generic (#247).
+
+* Added `extract_fit_time()` generic (#218).
+
 # hardhat 1.3.1
 
 * Changed an Rd name from `modeling-package` -> `modeling-usethis` at the

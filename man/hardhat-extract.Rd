@@ -9,8 +9,10 @@
 \alias{extract_fit_engine}
 \alias{extract_mold}
 \alias{extract_preprocessor}
+\alias{extract_postprocessor}
 \alias{extract_parameter_dials}
 \alias{extract_parameter_set_dials}
+\alias{extract_fit_time}
 \title{Generics for object extraction}
 \usage{
 extract_workflow(x, ...)
@@ -27,9 +29,13 @@ extract_mold(x, ...)
 
 extract_preprocessor(x, ...)
 
+extract_postprocessor(x, ...)
+
 extract_parameter_dials(x, ...)
 
 extract_parameter_set_dials(x, ...)
+
+extract_fit_time(x, ...)
 }
 \arguments{
 \item{x}{An object.}
@@ -56,6 +62,7 @@ expressions used for preprocessing.
 \item \code{extract_workflow()} returns a workflow, possibly fit.
 \item \code{extract_parameter_dials()} returns a single dials parameter object.
 \item \code{extract_parameter_set_dials()} returns a set of dials parameter objects.
+\item \code{extract_fit_time()} returns a tibble with fit times.
 }
 }
 \examples{
