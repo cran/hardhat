@@ -59,12 +59,10 @@ create_modeling_package <- function(path,
   check_installed("withr")
 
   # Avoid creating files if a bad model is supplied
-  if (!is_string(model)) {
-    abort("`model` must be a single string.")
-  }
+  check_string(model)
 
   if (has_spaces(model)) {
-    abort("`model` must not contain any spaces.")
+    cli::cli_abort("{.arg model} must not contain any spaces.")
   }
 
   usethis::create_package(path, fields, open = FALSE)
@@ -126,12 +124,10 @@ use_modeling_files <- function(model) {
 use_modeling_files_impl <- function(model, prompt_document = TRUE) {
   check_installed("usethis")
 
-  if (!is_string(model)) {
-    abort("`model` must be a string.")
-  }
+  check_string(model)
 
   if (has_spaces(model)) {
-    abort("`model` must not contain any spaces.")
+    cli::cli_abort("{.arg model} must not contain any spaces.")
   }
 
   data <- list(model = model)

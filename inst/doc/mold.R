@@ -1,7 +1,14 @@
 ## ----include = FALSE----------------------------------------------------------
+if (rlang::is_installed(c("modeldata", "recipes", "Matrix"))) {
+  run <- TRUE
+} else {
+  run <- FALSE
+}
+
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = run
 )
 
 options(rlang_backtrace_on_error = "none")
@@ -47,9 +54,11 @@ with_intercept <- mold(
 with_intercept$predictors
 
 ## ----error=TRUE---------------------------------------------------------------
+try({
 mold(~ body_mass_g - 1, penguins)
 
 mold(~ body_mass_g + 0, penguins)
+})
 
 ## -----------------------------------------------------------------------------
 expanded_dummies <- mold(~ body_mass_g + species, penguins)

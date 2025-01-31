@@ -372,27 +372,28 @@ refresh_blueprint.default_formula_blueprint <- function(blueprint) {
 #'
 #' @rdname run-mold
 #' @export
-run_mold.default_formula_blueprint <- function(blueprint, ..., data) {
+run_mold.default_formula_blueprint <- function(blueprint, ..., data, call = caller_env()) {
   check_dots_empty0(...)
 
-  cleaned <- mold_formula_default_clean(blueprint = blueprint, data = data)
+  cleaned <- mold_formula_default_clean(blueprint = blueprint, data = data, call = call)
 
   blueprint <- cleaned$blueprint
   data <- cleaned$data
 
-  mold_formula_default_process(blueprint = blueprint, data = data)
+  mold_formula_default_process(blueprint = blueprint, data = data, call = call)
 }
 
 # ------------------------------------------------------------------------------
 # mold - formula - clean
 
-mold_formula_default_clean <- function(blueprint, data) {
-  check_data_frame_or_matrix(data)
+mold_formula_default_clean <- function(blueprint, data, ..., call = caller_env()) {
+  check_dots_empty0(...)
+  check_data_frame_or_matrix(data, call = call)
   data <- coerce_to_tibble(data)
 
   # Check here, not in the constructor, because we
   # put a non-intercept-containing formula back in
-  check_implicit_intercept(blueprint$formula, arg = "formula")
+  check_implicit_intercept(blueprint$formula, arg = "formula", call = call)
 
   formula <- remove_formula_intercept(blueprint$formula, blueprint$intercept)
   formula <- alter_formula_environment(formula)
@@ -490,10 +491,13 @@ recurse_intercept_search <- function(x,
 # ------------------------------------------------------------------------------
 # mold - formula - process
 
-mold_formula_default_process <- function(blueprint, data) {
+mold_formula_default_process <- function(blueprint, data, ..., call = caller_env()) {
+  check_dots_empty0(...)
+
   processed <- mold_formula_default_process_predictors(
     blueprint = blueprint,
-    data = data
+    data = data,
+    call = call
   )
 
   blueprint <- processed$blueprint
@@ -503,7 +507,8 @@ mold_formula_default_process <- function(blueprint, data) {
 
   processed <- mold_formula_default_process_outcomes(
     blueprint = blueprint,
-    data = data
+    data = data,
+    call = call
   )
 
   blueprint <- processed$blueprint
@@ -523,14 +528,16 @@ mold_formula_default_process <- function(blueprint, data) {
   new_mold_process(predictors, outcomes, blueprint, extras)
 }
 
-mold_formula_default_process_predictors <- function(blueprint, data) {
+mold_formula_default_process_predictors <- function(blueprint, data, ..., call = caller_env()) {
+  check_dots_empty0(...)
+
   formula <- expand_formula_dot_notation(blueprint$formula, data)
   formula <- get_predictors_formula(formula)
 
-  original_names <- get_all_predictors(formula, data)
+  original_names <- get_all_predictors(formula, data, call = call)
   data <- data[original_names]
 
-  ptype <- extract_ptype(data)
+  ptype <- extract_ptype(data, call = call)
 
   if (identical(blueprint$indicators, "traditional") ||
       identical(blueprint$indicators, "one_hot")) {
@@ -553,24 +560,26 @@ mold_formula_default_process_predictors <- function(blueprint, data) {
   if (identical(blueprint$indicators, "none")) {
     factorish_names <- extract_original_factorish_names(ptype)
     factorish_data <- data[factorish_names]
-    check_no_factorish_in_interactions(formula, factorish_names)
-    check_no_factorish_in_functions(formula, factorish_names)
+    check_no_factorish_in_interactions(formula, factorish_names, error_call = call)
+    check_no_factorish_in_functions(formula, factorish_names, error_call = call)
     formula <- remove_factorish_from_formula(formula, factorish_names)
     data <- mask_factorish_in_data(data, factorish_names)
   }
 
-  framed <- model_frame(formula, data)
-  offset <- extract_offset(framed$terms, framed$data)
+  framed <- model_frame(formula, data, call = call)
+  offset <- extract_offset(framed$terms, framed$data, call = call)
 
   if (identical(blueprint$indicators, "one_hot")) {
     predictors <- model_matrix_one_hot(
       terms = framed$terms,
-      data = framed$data
+      data = framed$data,
+      call = call
     )
   } else {
     predictors <- model_matrix(
       terms = framed$terms,
-      data = framed$data
+      data = framed$data,
+      call = call
     )
   }
 
@@ -580,7 +589,7 @@ mold_formula_default_process_predictors <- function(blueprint, data) {
 
   terms <- simplify_terms(framed$terms)
 
-  predictors <- recompose(predictors, composition = blueprint$composition)
+  predictors <- recompose(predictors, composition = blueprint$composition, call = call)
 
   blueprint_terms <- blueprint$terms
   blueprint_terms$predictors <- terms
@@ -594,20 +603,22 @@ mold_formula_default_process_predictors <- function(blueprint, data) {
   )
 }
 
-mold_formula_default_process_outcomes <- function(blueprint, data) {
+mold_formula_default_process_outcomes <- function(blueprint, data, ..., call = caller_env()) {
+  check_dots_empty0(...)
+
   formula <- blueprint$formula
 
-  original_names <- get_all_outcomes(formula, data)
+  original_names <- get_all_outcomes(formula, data, call = call)
   data <- data[original_names]
 
-  ptype <- extract_ptype(data)
+  ptype <- extract_ptype(data, call = call)
 
   formula <- get_outcomes_formula(formula)
 
   # used on the `~ LHS` formula
-  check_no_interactions(formula)
+  check_no_interactions(formula, error_call = call)
 
-  framed <- model_frame(formula, data)
+  framed <- model_frame(formula, data, call = call)
 
   outcomes <- flatten_embedded_columns(framed$data)
 
@@ -631,13 +642,16 @@ mold_formula_default_process_outcomes <- function(blueprint, data) {
 run_forge.default_formula_blueprint <- function(blueprint,
                                                 new_data,
                                                 ...,
-                                                outcomes = FALSE) {
+                                                outcomes = FALSE,
+                                                call = caller_env()
+                                              ) {
   check_dots_empty0(...)
 
   cleaned <- forge_formula_default_clean(
     blueprint = blueprint,
     new_data = new_data,
-    outcomes = outcomes
+    outcomes = outcomes,
+    call = call
   )
 
   blueprint <- cleaned$blueprint
@@ -649,14 +663,16 @@ run_forge.default_formula_blueprint <- function(blueprint,
     blueprint = blueprint,
     predictors = predictors,
     outcomes = outcomes,
-    extras = extras
+    extras = extras,
+    call = call
   )
 }
 
 # ------------------------------------------------------------------------------
 
-forge_formula_default_clean <- function(blueprint, new_data, outcomes) {
-  check_data_frame_or_matrix(new_data)
+forge_formula_default_clean <- function(blueprint, new_data, outcomes, ..., call = caller_env()) {
+  check_dots_empty0(...)
+  check_data_frame_or_matrix(new_data, call = call)
   new_data <- coerce_to_tibble(new_data)
   check_unique_column_names(new_data)
   check_bool(outcomes)
@@ -672,18 +688,19 @@ forge_formula_default_clean <- function(blueprint, new_data, outcomes) {
     function(col, levels) factor(col, levels = levels)
   )
 
-  predictors <- shrink(new_data, predictors_ptype)
+  predictors <- shrink(new_data, predictors_ptype, call = call)
 
   predictors <- scream(
     predictors,
     predictors_ptype,
-    allow_novel_levels = blueprint$allow_novel_levels
+    allow_novel_levels = blueprint$allow_novel_levels,
+    call = call
   )
 
   if (outcomes) {
-    outcomes <- shrink(new_data, blueprint$ptypes$outcomes)
+    outcomes <- shrink(new_data, blueprint$ptypes$outcomes, call = call)
     # Never allow novel levels for outcomes
-    outcomes <- scream(outcomes, blueprint$ptypes$outcomes)
+    outcomes <- scream(outcomes, blueprint$ptypes$outcomes, call = call)
   } else {
     outcomes <- NULL
   }
@@ -693,10 +710,13 @@ forge_formula_default_clean <- function(blueprint, new_data, outcomes) {
 
 # ------------------------------------------------------------------------------
 
-forge_formula_default_process <- function(blueprint, predictors, outcomes, extras) {
+forge_formula_default_process <- function(blueprint, predictors, outcomes, extras, ..., call = caller_env()) {
+  check_dots_empty0(...)
+
   processed <- forge_formula_default_process_predictors(
     blueprint = blueprint,
-    predictors = predictors
+    predictors = predictors,
+    call = call
   )
 
   blueprint <- processed$blueprint
@@ -705,7 +725,8 @@ forge_formula_default_process <- function(blueprint, predictors, outcomes, extra
 
   processed <- forge_formula_default_process_outcomes(
     blueprint = blueprint,
-    outcomes = outcomes
+    outcomes = outcomes,
+    call = call
   )
 
   blueprint <- processed$blueprint
@@ -720,7 +741,9 @@ forge_formula_default_process <- function(blueprint, predictors, outcomes, extra
   new_forge_process(predictors, outcomes, extras)
 }
 
-forge_formula_default_process_predictors <- function(blueprint, predictors) {
+forge_formula_default_process_predictors <- function(blueprint, predictors, ..., call = caller_env()) {
+  check_dots_empty0(...)
+
   terms <- blueprint$terms$predictors
   terms <- alter_terms_environment(terms)
 
@@ -730,17 +753,19 @@ forge_formula_default_process_predictors <- function(blueprint, predictors) {
     predictors <- mask_factorish_in_data(predictors, factorish_names)
   }
 
-  framed <- model_frame(terms, predictors)
+  framed <- model_frame(terms, predictors, call = call)
 
   if (identical(blueprint$indicators, "one_hot")) {
     data <- model_matrix_one_hot(
       terms = framed$terms,
-      data = framed$data
+      data = framed$data,
+      call = call
     )
   } else {
     data <- model_matrix(
       terms = framed$terms,
-      data = framed$data
+      data = framed$data,
+      call = call
     )
   }
 
@@ -748,9 +773,9 @@ forge_formula_default_process_predictors <- function(blueprint, predictors) {
     data <- unmask_factorish_in_data(data, factorish_predictors)
   }
 
-  data <- recompose(data, composition = blueprint$composition)
+  data <- recompose(data, composition = blueprint$composition, call = call)
 
-  offset <- extract_offset(framed$terms, framed$data)
+  offset <- extract_offset(framed$terms, framed$data, call = call)
 
   extras <- list(offset = offset)
 
@@ -761,7 +786,8 @@ forge_formula_default_process_predictors <- function(blueprint, predictors) {
   )
 }
 
-forge_formula_default_process_outcomes <- function(blueprint, outcomes) {
+forge_formula_default_process_outcomes <- function(blueprint, outcomes, ..., call = caller_env()) {
+  check_dots_empty0(...)
 
   # no outcomes to process
   if (is.null(outcomes)) {
@@ -775,7 +801,7 @@ forge_formula_default_process_outcomes <- function(blueprint, outcomes) {
   terms <- blueprint$terms$outcomes
   terms <- alter_terms_environment(terms)
 
-  framed <- model_frame(terms, outcomes)
+  framed <- model_frame(terms, outcomes, call = call)
 
   # Because model.matrix() does this for the RHS and we want
   # to be consistent even though we are only going through
@@ -878,7 +904,10 @@ check_levels <- function(x,
   }
 
   if (!all(map_lgl(x, is.character))) {
-    cli::cli_abort("{.arg {arg}} must only contain character vectors.", call = call)
+    cli::cli_abort(
+      "{.arg {arg}} must only contain character vectors.", 
+      call = call
+    )
   }
 
   invisible(NULL)
@@ -966,11 +995,9 @@ expr_check_no_factorish_in_functions <- function(expr,
       expr <- as_label(original_expr)
 
       message <- c(
-        paste0(
-          "Functions involving factors or characters have been detected on the ",
-          "RHS of `formula`. These are not allowed when `indicators = \"none\"`."
-        ),
-        i = "Functions involving factors were detected for {.str {name}} in {.arg {expr}}."
+        "Functions involving factors or characters have been detected on the
+        RHS of {.arg formula}. These are not allowed when {.code indicators = \"none\"}.",
+        i = "Functions involving factors were detected for {.val {name}} in {.arg {expr}}."
       )
 
       cli::cli_abort(message, call = error_call)
@@ -1031,11 +1058,9 @@ expr_check_no_factorish_in_interaction_term <- function(expr,
     expr <- as_label(expr_original)
 
     message <- c(
-      paste0(
-        "Interaction terms involving factors or characters have been detected on the ",
-        "RHS of `formula`. These are not allowed when `indicators = \"none\"`."
-      ),
-      i = "Interactions terms involving factors were detected for {.str {name}} in {.arg {expr}}."
+      "Interaction terms involving factors or characters have been detected on the
+      RHS of {.arg formula}. These are not allowed when {.code indicators = \"none\"}.",
+      i = "Interactions terms involving factors were detected for {.val {name}} in {.arg {expr}}."
     )
 
     cli::cli_abort(message, call = error_call)
@@ -1072,7 +1097,7 @@ expr_check_no_interactions <- function(expr, error_call) {
     expr <- as_label(expr)
 
     message <- c(
-      "Interaction terms can't be specified on the LHS of `formula`.",
+      "Interaction terms can't be specified on the LHS of {.arg formula}.",
       i = "The following interaction term was found: {.arg {expr}}."
     )
 

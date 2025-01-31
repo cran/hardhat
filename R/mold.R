@@ -29,7 +29,7 @@
 #'  - `predictors`: A tibble containing the molded predictors to be used in the
 #'  model.
 #'
-#'  - `outcome`: A tibble containing the molded outcomes to be used in the
+#'  - `outcomes`: A tibble containing the molded outcomes to be used in the
 #'  model.
 #'
 #'  - `blueprint`: A method specific `"hardhat_blueprint"` object for use when
@@ -38,7 +38,7 @@
 #'  - `extras`: Either `NULL` if the blueprint returns no extra information,
 #'  or a named list containing the extra information.
 #'
-#' @examples
+#' @examplesIf rlang::is_installed(c("recipes"))
 #' # See the method specific documentation linked in Description
 #' # for the details of each blueprint, and more examples.
 #'
@@ -152,6 +152,8 @@ mold.recipe <- function(x, data, ..., blueprint = NULL) {
 #' @param blueprint A preprocessing blueprint.
 #'
 #' @param ... Not used. Required for extensibility.
+#' 
+#' @inheritParams validate_column_names
 #'
 #' @return
 #' `run_mold()` methods return the object that is then immediately returned from
@@ -175,7 +177,5 @@ run_mold <- function(blueprint, ...) {
 
 #' @export
 run_mold.default <- function(blueprint, ...) {
-  class <- class(blueprint)[[1L]]
-  message <- glue("No `run_mold()` method provided for an object of type <{class}>.")
-  abort(message)
+  cli::cli_abort("No {.fn run_mold} method provided for {.obj_type_friendly {blueprint}}.")
 }

@@ -1,7 +1,14 @@
 ## ----include = FALSE----------------------------------------------------------
+if (rlang::is_installed(c("modeldata", "recipes", "Matrix"))) {
+  run <- TRUE
+} else {
+  run <- FALSE
+}
+
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = run
 )
 
 options(rlang_backtrace_on_error = "none")
@@ -35,15 +42,19 @@ forge(penguin_test, formula_eng)
 forge(penguin_test, formula_eng, outcomes = TRUE)
 
 ## ----error=TRUE---------------------------------------------------------------
+try({
 test_missing_column <- subset(penguin_test, select = -species)
 
 forge(test_missing_column, formula_eng)
+})
 
 ## ----error=TRUE---------------------------------------------------------------
+try({
 test_species_double <- penguin_test
 test_species_double$species <- as.double(test_species_double$species)
 
 forge(test_species_double, formula_eng)
+})
 
 ## -----------------------------------------------------------------------------
 test_species_character <- penguin_test
@@ -94,9 +105,11 @@ penguin_recipe2 <- mold(rec2, penguin_train)
 recipe_eng_log_outcome <- penguin_recipe2$blueprint
 
 ## ----error=TRUE---------------------------------------------------------------
+try({
 penguin_test_no_outcome <- subset(penguin_test, select = -bill_length_mm)
 
 forge(penguin_test_no_outcome, recipe_eng_log_outcome)
+})
 
 ## -----------------------------------------------------------------------------
 rec3 <- recipe(bill_length_mm ~ body_mass_g + species, penguin_train) %>%

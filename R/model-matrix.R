@@ -10,6 +10,8 @@
 #' @param data A tibble to construct the design matrix with. This is
 #' typically the tibble returned from the corresponding call to
 #' [model_frame()].
+#' 
+#' @inheritParams validate_column_names
 #'
 #' @details
 #'
@@ -77,9 +79,10 @@
 #'   contrasts = global_override
 #' )
 #' @export
-model_matrix <- function(terms, data) {
-  check_terms(terms)
-  check_data_frame_or_matrix(data)
+model_matrix <- function(terms, data, ..., call = current_env()) {
+  check_dots_empty0(...)
+  check_terms(terms, call = call)
+  check_data_frame_or_matrix(data, call = call)
   data <- coerce_to_tibble(data)
 
   # otherwise model.matrix() will try and run model.frame() for us on data
@@ -125,9 +128,10 @@ check_terms <- function(x,
 
 # ------------------------------------------------------------------------------
 
-model_matrix_one_hot <- function(terms, data) {
-  check_terms(terms)
-  check_data_frame_or_matrix(data)
+model_matrix_one_hot <- function(terms, data, ..., call = caller_env()) {
+  check_dots_empty0(...)
+  check_terms(terms, call = call)
+  check_data_frame_or_matrix(data, call = call)
   data <- coerce_to_tibble(data)
 
   n_cols <- length(data)
@@ -159,7 +163,7 @@ model_matrix_one_hot <- function(terms, data) {
     data[[name]] <- assign_contrasts(col, n, contrasts)
   }
 
-  model_matrix(terms, data)
+  model_matrix(terms, data, call = call)
 }
 
 #' Contrast function for one-hot encodings
@@ -167,37 +171,47 @@ model_matrix_one_hot <- function(terms, data) {
 #' This contrast function produces a model matrix that has indicator columns for
 #' each level of each factor.
 #'
-#' @param n A vector of character factor levels or the number of unique levels.
+#' @param n A vector of character factor levels (of length >=1) or the number
+#' of unique levels (>= 1).
 #' @param contrasts This argument is for backwards compatibility and only the
 #'   default of `TRUE` is supported.
 #' @param sparse This argument is for backwards compatibility and only the
 #'   default of `FALSE` is supported.
 #'
+#' @includeRmd man/rmd/one-hot.Rmd details
+#'
 #' @return A diagonal matrix that is `n`-by-`n`.
 #'
 #' @keywords internal
+#' @export
 contr_one_hot <- function(n, contrasts = TRUE, sparse = FALSE) {
   if (sparse) {
-    warn("`sparse = TRUE` not implemented for `contr_one_hot()`.")
+    cli::cli_warn("{.code sparse = TRUE} not implemented for {.fun contr_one_hot}.")
   }
 
   if (!contrasts) {
-    warn("`contrasts = FALSE` not implemented for `contr_one_hot()`.")
+    cli::cli_warn(
+      "{.code contrasts = FALSE} not implemented for {.fun contr_one_hot}."
+    )
   }
 
   if (is.character(n)) {
+    if (length(n) < 1) {
+      cli::cli_abort("{.arg n} cannot be empty.")
+    }
     names <- n
     n <- length(names)
   } else if (is.numeric(n)) {
+    check_number_whole(n, min = 1)
     n <- as.integer(n)
 
     if (length(n) != 1L) {
-      abort("`n` must have length 1 when an integer is provided.")
+      cli::cli_abort("{.arg n} must have length 1 when an integer is provided.")
     }
 
     names <- as.character(seq_len(n))
   } else {
-    abort("`n` must be a character vector or an integer of size 1.")
+    check_number_whole(n, min = 1)
   }
 
   out <- diag(n)

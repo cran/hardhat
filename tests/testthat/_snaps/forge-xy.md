@@ -1,10 +1,87 @@
+# asking for the outcome is special cased for vector `y` values
+
+    Code
+      forge(iris, x1$blueprint, outcomes = TRUE)
+    Condition
+      Error in `forge()`:
+      ! The following required columns are missing: ".outcome".
+      i This indicates that `mold()` was called with a vector for `y`.
+      i When this is the case, and the outcome columns are requested in `forge()`, `new_data` must include a column with the automatically generated name, `.outcome`, containing the outcome.
+
+---
+
+    Code
+      forge(iris, x2$blueprint, outcomes = TRUE)
+    Condition
+      Error in `forge()`:
+      ! The following required columns are missing: ".outcome".
+      i This indicates that `mold()` was called with a vector for `y`.
+      i When this is the case, and the outcome columns are requested in `forge()`, `new_data` must include a column with the automatically generated name, `.outcome`, containing the outcome.
+
+# new_data can only be a data frame / matrix
+
+    Code
+      forge("hi", x1$blueprint)
+    Condition
+      Error in `forge()`:
+      ! No `forge()` method provided for a string.
+
+---
+
+    Code
+      forge("hi", x2$blueprint)
+    Condition
+      Error in `forge()`:
+      ! No `forge()` method provided for a string.
+
+---
+
+    Code
+      forge("hi", x3$blueprint)
+    Condition
+      Error in `forge()`:
+      ! No `forge()` method provided for a string.
+
+# missing predictor columns fail appropriately
+
+    Code
+      forge(iris[, 1, drop = FALSE], x1$blueprint)
+    Condition
+      Error in `forge()`:
+      ! The required column "Sepal.Width" is missing.
+
+---
+
+    Code
+      forge(iris[, 1, drop = FALSE], x2$blueprint)
+    Condition
+      Error in `forge()`:
+      ! The required column "Sepal.Width" is missing.
+
+---
+
+    Code
+      forge(iris[, 3, drop = FALSE], x1$blueprint)
+    Condition
+      Error in `forge()`:
+      ! The required columns "Sepal.Length" and "Sepal.Width" are missing.
+
+---
+
+    Code
+      forge(iris[, 3, drop = FALSE], x2$blueprint)
+    Condition
+      Error in `forge()`:
+      ! The required columns "Sepal.Length" and "Sepal.Width" are missing.
+
 # novel predictor levels are caught
 
     Code
       xx <- forge(new, x$blueprint)
     Condition
       Warning:
-      Novel levels found in column 'f': 'e'. The levels have been removed, and values have been coerced to 'NA'.
+      Novel level found in column "f": "e".
+      i The level has been removed, and values have been coerced to <NA>.
 
 # novel predictor levels can be ignored
 
@@ -17,7 +94,8 @@
       xx1 <- forge(new, x1$blueprint, outcomes = TRUE)
     Condition
       Warning:
-      Novel levels found in column 'f': 'e'. The levels have been removed, and values have been coerced to 'NA'.
+      Novel level found in column "f": "e".
+      i The level has been removed, and values have been coerced to <NA>.
 
 ---
 
@@ -25,5 +103,6 @@
       xx2 <- forge(new, x2$blueprint, outcomes = TRUE)
     Condition
       Warning:
-      Novel levels found in column 'f': 'e'. The levels have been removed, and values have been coerced to 'NA'.
+      Novel level found in column "f": "e".
+      i The level has been removed, and values have been coerced to <NA>.
 

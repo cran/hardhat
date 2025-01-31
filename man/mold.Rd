@@ -17,7 +17,7 @@ A named list containing 4 elements:
 \itemize{
 \item \code{predictors}: A tibble containing the molded predictors to be used in the
 model.
-\item \code{outcome}: A tibble containing the molded outcomes to be used in the
+\item \code{outcomes}: A tibble containing the molded outcomes to be used in the
 model.
 \item \code{blueprint}: A method specific \code{"hardhat_blueprint"} object for use when
 making predictions.
@@ -41,6 +41,7 @@ how to use each one in conjunction with \code{mold()}.
 }
 }
 \examples{
+\dontshow{if (rlang::is_installed(c("recipes"))) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # See the method specific documentation linked in Description
 # for the details of each blueprint, and more examples.
 
@@ -53,4 +54,5 @@ mold(Species ~ Sepal.Width, iris)
 # Recipe
 library(recipes)
 mold(recipe(Species ~ Sepal.Width, iris), iris)
+\dontshow{\}) # examplesIf}
 }

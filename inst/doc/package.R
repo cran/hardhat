@@ -1,7 +1,14 @@
 ## ----include = FALSE----------------------------------------------------------
+if (rlang::is_installed(c("modeldata", "recipes", "Matrix"))) {
+  run <- TRUE
+} else {
+  run <- FALSE
+}
+
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = run
 )
 
 options(rlang_backtrace_on_error = "none")
@@ -102,9 +109,11 @@ simple_lm_bridge(processed_1)
 simple_lm_bridge(processed_2)
 
 ## ----error=TRUE---------------------------------------------------------------
+try({
 multi_outcome <- mold(bill_length_mm + bill_depth_mm ~ body_mass_g + species, penguins)
 
 simple_lm_bridge(multi_outcome)
+})
 
 ## -----------------------------------------------------------------------------
 # Generic
@@ -242,6 +251,7 @@ predict_simple_lm_bridge <- function(type, object, predictors) {
 }
 
 ## ----error=TRUE---------------------------------------------------------------
+try({
 model <- simple_lm(bill_length_mm ~ body_mass_g + species, penguins)
 
 # Pass in the data frame
@@ -251,6 +261,7 @@ predict_simple_lm_bridge("numeric", model, predictors)
 
 # Partial matches are an error
 predict_simple_lm_bridge("numer", model, predictors)
+})
 
 ## -----------------------------------------------------------------------------
 predict.simple_lm <- function(object, new_data, type = "numeric", ...) {
@@ -271,6 +282,7 @@ model <- simple_lm(bill_length_mm ~ log(body_mass_g) + species, penguins)
 predict(model, penguins)
 
 ## ----warning=TRUE, error=TRUE-------------------------------------------------
+try({
 # `new_data` isn't a data frame
 predict(model, penguins$species)
 
@@ -300,4 +312,5 @@ predict(model, penguins_chr_bad_species)
 penguins_dbl_species <- transform(penguins, species = 1)
 
 predict(model, penguins_dbl_species)
+})
 
