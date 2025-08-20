@@ -1,4 +1,4 @@
-## ----include = FALSE----------------------------------------------------------
+## -----------------------------------------------------------------------------
 if (rlang::is_installed(c("modeldata", "recipes", "Matrix"))) {
   run <- TRUE
 } else {
@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 
 options(rlang_backtrace_on_error = "none")
 
-## ----setup--------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(hardhat)
 library(modeldata)
 
@@ -41,14 +41,14 @@ forge(penguin_test, formula_eng)
 ## -----------------------------------------------------------------------------
 forge(penguin_test, formula_eng, outcomes = TRUE)
 
-## ----error=TRUE---------------------------------------------------------------
+## -----------------------------------------------------------------------------
 try({
 test_missing_column <- subset(penguin_test, select = -species)
 
 forge(test_missing_column, formula_eng)
 })
 
-## ----error=TRUE---------------------------------------------------------------
+## -----------------------------------------------------------------------------
 try({
 test_species_double <- penguin_test
 test_species_double$species <- as.double(test_species_double$species)
@@ -68,7 +68,7 @@ class(forged_char$predictors$species)
 
 levels(forged_char$predictors$species)
 
-## ----warning=TRUE-------------------------------------------------------------
+## -----------------------------------------------------------------------------
 test_species_lossy <- penguin_test
 test_species_lossy$species <- as.character(test_species_lossy$species)
 test_species_lossy$species[2] <- "im new!"
@@ -77,10 +77,10 @@ forged_lossy <- forge(test_species_lossy, formula_eng)
 
 forged_lossy$predictors
 
-## ----error=FALSE, warning=FALSE, message = FALSE------------------------------
+## -----------------------------------------------------------------------------
 library(recipes)
 
-rec <- recipe(bill_length_mm ~ body_mass_g + species, penguin_train) %>%
+rec <- recipe(bill_length_mm ~ body_mass_g + species, penguin_train) |>
   step_dummy(species)
 
 penguin_recipe <- mold(rec, penguin_train)
@@ -96,15 +96,15 @@ recipe_eng
 forge(penguin_test, recipe_eng, outcomes = TRUE)
 
 ## -----------------------------------------------------------------------------
-rec2 <- recipe(bill_length_mm ~ body_mass_g + species, penguin_train) %>%
-  step_dummy(species) %>%
+rec2 <- recipe(bill_length_mm ~ body_mass_g + species, penguin_train) |>
+  step_dummy(species) |>
   step_center(bill_length_mm) # Here we modify the outcome
 
 penguin_recipe2 <- mold(rec2, penguin_train)
 
 recipe_eng_log_outcome <- penguin_recipe2$blueprint
 
-## ----error=TRUE---------------------------------------------------------------
+## -----------------------------------------------------------------------------
 try({
 penguin_test_no_outcome <- subset(penguin_test, select = -bill_length_mm)
 
@@ -112,8 +112,8 @@ forge(penguin_test_no_outcome, recipe_eng_log_outcome)
 })
 
 ## -----------------------------------------------------------------------------
-rec3 <- recipe(bill_length_mm ~ body_mass_g + species, penguin_train) %>%
-  step_dummy(species) %>%
+rec3 <- recipe(bill_length_mm ~ body_mass_g + species, penguin_train) |>
+  step_dummy(species) |>
   step_center(bill_length_mm, skip = TRUE)
 
 penguin_recipe3 <- mold(rec3, penguin_train)

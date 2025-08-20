@@ -1,4 +1,4 @@
-## ----include = FALSE----------------------------------------------------------
+## -----------------------------------------------------------------------------
 if (rlang::is_installed(c("modeldata", "recipes", "Matrix"))) {
   run <- TRUE
 } else {
@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 
 options(rlang_backtrace_on_error = "none")
 
-## ----setup--------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(hardhat)
 library(tibble)
 library(modeldata)
@@ -21,10 +21,10 @@ library(modeldata)
 data(penguins)
 penguins <- na.omit(penguins)
 
-## ----out.width = '100%', echo = FALSE-----------------------------------------
+## -----------------------------------------------------------------------------
 knitr::include_graphics("../man/figures/Fitting.png")
 
-## ----out.width = '100%', echo = FALSE-----------------------------------------
+## -----------------------------------------------------------------------------
 knitr::include_graphics("../man/figures/Prediction.png")
 
 ## -----------------------------------------------------------------------------
@@ -108,7 +108,7 @@ simple_lm_bridge(processed_1)
 
 simple_lm_bridge(processed_2)
 
-## ----error=TRUE---------------------------------------------------------------
+## -----------------------------------------------------------------------------
 try({
 multi_outcome <- mold(bill_length_mm + bill_depth_mm ~ body_mass_g + species, penguins)
 
@@ -167,7 +167,7 @@ simple_lm(predictors, outcomes_df)
 # Formula interface
 simple_lm(body_mass_g ~ bill_length_mm + bill_depth_mm, penguins)
 
-## ----warning=FALSE, message=FALSE---------------------------------------------
+## -----------------------------------------------------------------------------
 library(recipes)
 
 # - Log a predictor
@@ -175,8 +175,8 @@ library(recipes)
 simple_lm(body_mass_g ~ log(bill_length_mm) + species, penguins)
 
 # Same, but with a recipe
-rec <- recipe(body_mass_g ~ bill_length_mm + species, penguins) %>%
-  step_log(bill_length_mm) %>%
+rec <- recipe(body_mass_g ~ bill_length_mm + species, penguins) |>
+  step_log(bill_length_mm) |>
   step_dummy(species, one_hot = TRUE)
 
 simple_lm(rec, penguins)
@@ -250,7 +250,7 @@ predict_simple_lm_bridge <- function(type, object, predictors) {
   )
 }
 
-## ----error=TRUE---------------------------------------------------------------
+## -----------------------------------------------------------------------------
 try({
 model <- simple_lm(bill_length_mm ~ body_mass_g + species, penguins)
 
@@ -281,7 +281,7 @@ model <- simple_lm(bill_length_mm ~ log(body_mass_g) + species, penguins)
 
 predict(model, penguins)
 
-## ----warning=TRUE, error=TRUE-------------------------------------------------
+## -----------------------------------------------------------------------------
 try({
 # `new_data` isn't a data frame
 predict(model, penguins$species)

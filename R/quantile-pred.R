@@ -49,7 +49,9 @@ quantile_pred <- function(values, quantile_levels = double()) {
 new_quantile_pred <- function(values = list(), quantile_levels = double()) {
   quantile_levels <- vctrs::vec_cast(quantile_levels, double())
   vctrs::new_vctr(
-    values, quantile_levels = quantile_levels, class = "quantile_pred"
+    values,
+    quantile_levels = quantile_levels,
+    class = "quantile_pred"
   )
 }
 
@@ -68,7 +70,7 @@ extract_quantile_levels <- function(x) {
 #' @export
 #' @rdname quantile_pred
 as_tibble.quantile_pred <-
-  function (x, ..., .rows = NULL, .name_repair = "minimal", rownames = NULL) {
+  function(x, ..., .rows = NULL, .name_repair = "minimal", rownames = NULL) {
     lvls <- attr(x, "quantile_levels")
     n_samp <- length(x)
     n_quant <- length(lvls)
@@ -105,12 +107,12 @@ median.quantile_pred <- function(x, ...) {
   lvls <- attr(x, "quantile_levels")
   loc_median <- (abs(lvls - 0.5) < sqrt(.Machine$double.eps))
   if (any(loc_median)) {
-    return(map_dbl(x, ~ .x[min(which(loc_median))]))
+    return(map_dbl(x, \(.x) .x[min(which(loc_median))]))
   }
   if (length(lvls) < 2 || min(lvls) > 0.5 || max(lvls) < 0.5) {
     return(rep(NA, vctrs::vec_size(x)))
   }
-  map_dbl(x, ~ stats::approx(lvls, .x, xout = 0.5)$y)
+  map_dbl(x, \(.x) stats::approx(lvls, .x, xout = 0.5)$y)
 }
 
 #' @export
@@ -141,7 +143,8 @@ check_quantile_pred_inputs <- function(values, levels, call = caller_env()) {
   if (ncol(values) != num_lvls) {
     cli::cli_abort(
       "The number of columns in {.arg values} must be equal to the length of
-        {.arg quantile_levels}.", call = call
+        {.arg quantile_levels}.",
+      call = call
     )
   }
 

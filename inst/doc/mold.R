@@ -1,4 +1,4 @@
-## ----include = FALSE----------------------------------------------------------
+## -----------------------------------------------------------------------------
 if (rlang::is_installed(c("modeldata", "recipes", "Matrix"))) {
   run <- TRUE
 } else {
@@ -13,7 +13,7 @@ knitr::opts_chunk$set(
 
 options(rlang_backtrace_on_error = "none")
 
-## ----setup--------------------------------------------------------------------
+## -----------------------------------------------------------------------------
 library(hardhat)
 library(modeldata)
 
@@ -53,7 +53,7 @@ with_intercept <- mold(
 
 with_intercept$predictors
 
-## ----error=TRUE---------------------------------------------------------------
+## -----------------------------------------------------------------------------
 try({
 mold(~ body_mass_g - 1, penguins)
 
@@ -122,11 +122,11 @@ xy_with_intercept$predictors
 ## -----------------------------------------------------------------------------
 mold(x, y$body_mass_g)$outcomes
 
-## ----message=FALSE, warning=FALSE---------------------------------------------
+## -----------------------------------------------------------------------------
 library(recipes)
 
-rec <- recipe(bill_length_mm ~ species + bill_depth_mm, penguins) %>%
-  step_log(bill_length_mm) %>%
+rec <- recipe(bill_length_mm ~ species + bill_depth_mm, penguins) |>
+  step_log(bill_length_mm) |>
   step_dummy(species)
 
 penguin_recipe <- mold(rec, penguins)
