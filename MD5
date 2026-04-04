@@ -1,10 +1,10 @@
-8e4012bc2d3cf5019fc8cc1efca13eb6 *DESCRIPTION
+569349bb20ffc2f156ebeb1333b420cb *DESCRIPTION
 0eb6d48141f0e71c37a3a1c9ee167182 *LICENSE
-253b6acc5880798dd42e580d31a22c53 *NAMESPACE
-8f94b020f3d5e04540663c9ad95b6600 *NEWS.md
+140cedf4f0442f8a734f5d5d9659e05a *NAMESPACE
+d984040ec81458d514c25a5fcdb5996a *NEWS.md
 0339143693ebe93b23b37ffe3259414b *R/blueprint-formula-default.R
 f6d99138620faa948bb78a8c7725fe2f *R/blueprint-formula.R
-e5e06351dfc49cb552b7e3feb1eb5ca2 *R/blueprint-recipe-default.R
+d64ca0bc4c9f7b7da23cbaee35dccc4a *R/blueprint-recipe-default.R
 53a5be746b22722912dc88109786050f *R/blueprint-recipe.R
 c74d70843abe8233d2668e3840fb7069 *R/blueprint-xy-default.R
 1d88e3b1591c365448d0c327efef039e *R/blueprint-xy.R
@@ -22,6 +22,7 @@ a4456bc7107fa5358f4cd3cc57c40ab5 *R/hardhat-package.R
 799bdb3344a8c0c98ff29fa5f7055f01 *R/import-standalone-obj-type.R
 17bb123964057b839a42eda1c3da214b *R/import-standalone-purrr.R
 62545d8f97ad53b42ec2efcbde7de6bc *R/import-standalone-types-check.R
+71e398e3a5420bef4474fa20d37de17a *R/impute-quantile_pred.R
 76fc1d04bf1d3b7d5889befa0d7360bf *R/intercept.R
 84ca821e00e21486383e20d2af0fa13b *R/levels.R
 160f7ab22211295c0c4b8aa15c9e9f77 *R/model-frame.R
@@ -31,7 +32,7 @@ fd2fb13d11d3b543c580020a24fd1e0e *R/mold.R
 2d0c7ae3a3b85da19b6647f9e30caf10 *R/new.R
 a0aed6db7a20aeb521a8246af8414d53 *R/print.R
 2943d41692c6e456a609323a4e23961c *R/ptype.R
-7b773a2dd018f11360b75753d7b1625b *R/quantile-pred.R
+e3ebfca38718f93d2fa32c96694009b7 *R/quantile-pred.R
 5a5d3468408ca8bd1aa2e06dbe00d461 *R/recompose.R
 d42a0d4ddff0401d741106cca768361b *R/scream.R
 e5b5438d02beb408aad4cf68e398352a *R/shrink.R
@@ -44,7 +45,7 @@ c883384244b19cd26cbc70d39307b382 *R/use.R
 cb851e39a83cda6739c720722a0f0474 *R/util.R
 e7c6eecdf3af07c561105e25cb2d28ed *R/validation.R
 8729f813feb0dd279bfe77081d0f9cf8 *README.md
-29864c99b59aa0337f3f0c4fa7a4d009 *build/vignette.rds
+47383f340249754191bf3b84b9ba5893 *build/vignette.rds
 9ddcf133f774f3c61939fa4d8d991b3e *data/hardhat-example-data.RData
 696a9cccf3cde1d99874adf23fe1ce3e *inst/doc/forge.R
 4d347d896aa8b9960bf8b0395b7749e0 *inst/doc/forge.Rmd
@@ -62,7 +63,7 @@ c59f718755c5f99f3f8c3159bc1c42b4 *inst/doc/package.R
 d48455fa35862c3cbf8ae09164cff5d0 *man/check_quantile_levels.Rd
 6faf4276dc7b3c46fe8ec34f1ee48f30 *man/contr_one_hot.Rd
 ed097d4314cd6a3ccfe45ccdc925f761 *man/default_formula_blueprint.Rd
-69ed0cad17cf7c101bbd6483d2f22866 *man/default_recipe_blueprint.Rd
+3dcae5abc5007fe00d9207e70c511dc7 *man/default_recipe_blueprint.Rd
 aac2cb325890381c3db98a8c4a6927f0 *man/default_xy_blueprint.Rd
 f779bbcbf2f7b55cac392ed6b83cc0cb *man/delete_response.Rd
 0dbf10af64ac1114e24a7e893f7bf95a *man/extract_ptype.Rd
@@ -86,8 +87,9 @@ bf2f1ad432ecccee3400afe533404113 *man/figures/lifecycle-superseded.svg
 e438115d379d17dd1714cd8ef42e1f64 *man/get_levels.Rd
 47c916e9a9eb30291e6b70c4a9aed3e6 *man/hardhat-example-data.Rd
 4ea5e6fb6c4523213e309c87346b1cd8 *man/hardhat-extract.Rd
-39239a47d866f089129c72124e6de0e9 *man/hardhat-package.Rd
+46564f0df769f955d0948ec64357fba9 *man/hardhat-package.Rd
 ec2125d0d888fd5bb8c7cbf157424be0 *man/importance_weights.Rd
+0da9a3f406b1e7959f5b54b292f47f17 *man/impute_quantiles.Rd
 1de1fdd28cb80f807d944f4b34590581 *man/is_blueprint.Rd
 8a195c81083b2141737c2701c38ca20c *man/is_case_weights.Rd
 1051c31e1384e575c7d1641ae388fac9 *man/is_frequency_weights.Rd
@@ -96,14 +98,14 @@ d39d3955b6b2d85e16a45754237a1e94 *man/model_frame.Rd
 787a438fd4884b322712fa9a02c3112f *man/model_matrix.Rd
 9b7ac8301a05c147047c9aa5027031d8 *man/model_offset.Rd
 aff3414f45c6db13c082e6b289814836 *man/modeling-usethis.Rd
-e160b5c5b046d62ec1521f967dd8da0f *man/mold.Rd
+48018f375acf6c9de55ac5614091f72f *man/mold.Rd
 042c47a211ecb90169557450700a0b82 *man/new-blueprint.Rd
 1ebc8fe81ba4efdf810d9a0d7babdcaa *man/new-default-blueprint.Rd
 0b155e5384e90f6a383a89605014cfc2 *man/new_case_weights.Rd
 d4125210678269d91d5034bb3e406643 *man/new_frequency_weights.Rd
 8eaa48ab2c5cbef0029a4f00a318f551 *man/new_importance_weights.Rd
 ef068253ddbf0aa725d0aaa90e002243 *man/new_model.Rd
-bfa1284cfe8bc71a3a8fbd851a35deaa *man/quantile_pred.Rd
+afe42537ff92c905095c52c35c34cd37 *man/quantile_pred.Rd
 d5395e032ab758d6c7823b77f290bfc7 *man/recompose.Rd
 bd471b7299d2aedb11dd42e9de537123 *man/refresh_blueprint.Rd
 2e01d569751e734f2563845eb6547a93 *man/rmd/one-hot.Rmd
@@ -111,10 +113,11 @@ bd471b7299d2aedb11dd42e9de537123 *man/refresh_blueprint.Rd
 eefe5972b6f099c956913c4b227b2664 *man/run-mold.Rd
 367e4a51c913ee630aa7e1234b6cbe1e *man/scream.Rd
 043589418c420168cc5d05968e25dc1f *man/shrink.Rd
+9a8cc6f175b126ccb667c3572b74d72d *man/snap.Rd
 8f7a60a74364713e15887afbca454ab5 *man/spruce-multiple.Rd
 8dfab9d28f3e2322011084a6c74fa135 *man/spruce.Rd
 0da8be57681d8934912bfae65c9e5013 *man/standardize.Rd
-c6662b4ae88ecd87a99eabc1bb99c66a *man/tune.Rd
+733a4a5451bfb877980f70fe688fc64f *man/tune.Rd
 722b6f28451928c0340f5333f54d4633 *man/update_blueprint.Rd
 3bedd97b773344d5e1552ab6c871daef *man/validate_column_names.Rd
 1aac661ffcf0da6313b11fea35a9b45a *man/validate_no_formula_duplication.Rd
@@ -137,6 +140,7 @@ d0d2b1d714665c877690324a4d292a0a *tests/testthat/_snaps/forge-formula.md
 38d15756aab854b7c87df2b2f255badb *tests/testthat/_snaps/forge-recipe.md
 85cf2c274d0423be5e64c88278b87bba *tests/testthat/_snaps/forge-xy.md
 83fcfdb968b05bbe2326b9b1c9c5d4f5 *tests/testthat/_snaps/forge.md
+9a2bd2849c1eef14968354a058c1327e *tests/testthat/_snaps/impute_quantile_pred.md
 88dac9ff7a8b7d8240dd534ba515d1de *tests/testthat/_snaps/intercept.md
 6d6b5f5d4b801f155da9e3f0b0ec1af3 *tests/testthat/_snaps/levels.md
 02eee8448c630c5d1aa30e8d1ccf402a *tests/testthat/_snaps/model-matrix.md
@@ -145,8 +149,8 @@ dcb0605ec3a0a1b218594efa288de216 *tests/testthat/_snaps/mold-formula.md
 6c8c26b28715d9d3228d38b7cc9e3f5a *tests/testthat/_snaps/mold-recipe.md
 77b0f1e33c99a5071107074728cab5bf *tests/testthat/_snaps/mold-xy.md
 6c306c1ee251523ef74b0bab29e0d349 *tests/testthat/_snaps/mold.md
-b58b9ac5fc3b874ecc72b9ea93c6a0b6 *tests/testthat/_snaps/print.md
-4ec0d9b2014ef7a49bd3c8782604d2a2 *tests/testthat/_snaps/quantile-pred.md
+2411a7b6b31f1aca875407ffdbd2d97e *tests/testthat/_snaps/print.md
+3025d405520199139847a623d12c37e2 *tests/testthat/_snaps/quantile-pred.md
 f193bd2aff02b35c05dba351107263f7 *tests/testthat/_snaps/recompose.md
 945e2682c176188a21cee13c0e66c305 *tests/testthat/_snaps/scream.md
 608fd85383b6900bc3341f8e74c38f2a *tests/testthat/_snaps/shrink.md
@@ -173,6 +177,7 @@ f606ef6468667f9d3a06c3f92fd4f713 *tests/testthat/test-forge-formula.R
 97d4a71032411ca2652785f5bd4737cb *tests/testthat/test-forge-recipe.R
 2f3cad3bf08e9c7144248c3a9abb344d *tests/testthat/test-forge-xy.R
 e4455e9fe9f23e760be810bd6e188111 *tests/testthat/test-forge.R
+fef88032dcbf53387701eb354e7de023 *tests/testthat/test-impute_quantile_pred.R
 8eb373594ec045ddeba91f565f4fe43a *tests/testthat/test-intercept.R
 2cf39d53ea5926fdd59eedf442442ddc *tests/testthat/test-levels.R
 ad418c9c3d72c1fa700423555a7031cd *tests/testthat/test-model-matrix.R
@@ -182,7 +187,7 @@ ad418c9c3d72c1fa700423555a7031cd *tests/testthat/test-model-matrix.R
 fe0f42ec4e44d64e761bf223573cff88 *tests/testthat/test-mold-xy.R
 0f8b67ecec6f1e14a28c17ada01d63d2 *tests/testthat/test-mold.R
 bb95cd7e2205a7d9a03fe32f5be5afe2 *tests/testthat/test-print.R
-f331144ad9b155b2c583b93c1c306d92 *tests/testthat/test-quantile-pred.R
+982c87c01fa07f7433ce6dda1a005cac *tests/testthat/test-quantile-pred.R
 0b93cb35fcd808c47816b29886f12a78 *tests/testthat/test-recompose.R
 b9bfa449add3f0a4525c7ae2d201bd70 *tests/testthat/test-scream.R
 ca8b0f3549b5335ff6cb89d54ad18a96 *tests/testthat/test-shrink.R
